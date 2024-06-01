@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
 import 'package:nus_orbital_chronos/services/timer_data.dart';
 
-class Pomodoro extends StatefulWidget {
+class BreakTime extends StatefulWidget {
   final TimerData data;
-  const Pomodoro({super.key, required this.data});
+  const BreakTime({super.key, required this.data});
 
   @override
-  State<Pomodoro> createState() => _PomodoroState();
+  State<BreakTime> createState() => _BreakTimeState();
 }
 
-class _PomodoroState extends State<Pomodoro> {
+class _BreakTimeState extends State<BreakTime> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.green[100],
       appBar: AppBar(
         title: const Text('Focus Mode', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.indigo,
+        backgroundColor: Colors.green[700],
         automaticallyImplyLeading: false,
       ),
       body: Expanded(
@@ -31,27 +31,28 @@ class _PomodoroState extends State<Pomodoro> {
               TimerCountdown(
                 endTime: DateTime.now().add(
                   Duration(
-                    minutes: int.parse(widget.data.dur),
+                    minutes: int.parse(widget.data.breakDur),
                   ),
                 ),
                 onEnd: () {
-                  print('Timer finished');
+                  Navigator.pop(context);
                 },
                 format: CountDownTimerFormat.minutesSeconds,
                 enableDescriptions: false,
                 timeTextStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
                 colonsTextStyle: TextStyle(fontSize: 40),
               ),
-              Text(widget.data.task, style: TextStyle(fontSize: 20),),
+              Text('Take a break...', style: TextStyle(fontSize: 20),),
             ],
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.green[700],
         onPressed: () {
           Navigator.pop(context);
         },
-        child: const Icon(Icons.sensor_door_outlined),
+        child: const Icon(Icons.skip_next, color: Colors.white),
       ),
     );
   }

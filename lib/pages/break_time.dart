@@ -29,13 +29,9 @@ class _BreakTimeState extends State<BreakTime> {
                 child: Image(image: AssetImage('assets/tomato.png')),
               ),
               TimerCountdown(
-                endTime: DateTime.now().add(
-                  Duration(
-                    minutes: int.parse(widget.data.breakDur),
-                  ),
-                ),
+                endTime: DateTime.now().add(Duration(minutes: widget.data.breakDur)),
                 onEnd: () {
-                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/pomodoro', arguments: widget.data);
                 },
                 format: CountDownTimerFormat.minutesSeconds,
                 enableDescriptions: false,
@@ -47,12 +43,25 @@ class _BreakTimeState extends State<BreakTime> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.green[700],
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        child: const Icon(Icons.skip_next, color: Colors.white),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          FloatingActionButton(
+            backgroundColor: Colors.green[700],
+            onPressed: () {
+              Navigator.pushNamed(context, '/pomodoro', arguments: widget.data);
+            },
+            child: const Icon(Icons.skip_next, color: Colors.white),
+          ),
+          SizedBox(height: 10),
+          FloatingActionButton(
+            backgroundColor: Colors.green[700],
+            onPressed: () {
+              Navigator.popUntil(context, (route) => route.settings.name == "/timer_config");
+            },
+            child: const Icon(Icons.sensor_door_outlined, color: Colors.white),
+          ),
+        ],
       ),
     );
   }

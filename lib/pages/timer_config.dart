@@ -113,10 +113,10 @@ class _TimerConfigState extends State<TimerConfig> {
                       );
                     } else {
                       TimerData data = TimerData(
-                        task: goal.text,
-                        dur: interval.text,
-                        num: numIntervals.text,
-                        breakDur: breakDuration.text,
+                        task: 'Goal: ${goal.text}',
+                        dur: int.parse(interval.text),
+                        num: int.parse(numIntervals.text),
+                        breakDur: int.parse(breakDuration.text),
                       );
                       Navigator.pushNamed(context, '/pomodoro', arguments: data);
                     }

@@ -31,6 +31,8 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_timer_countdown: ^1.0.7
+  hive:
+  hive_flutter:
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -40,6 +42,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  hive_generator:
+  build_runner:
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -63,6 +67,7 @@ flutter:
   assets:
     - assets/target.png
     - assets/tomato.png
+    - assets/dollar.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

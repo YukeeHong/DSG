@@ -1,10 +1,15 @@
+// Import material
 import 'package:flutter/material.dart';
+
+// Import pages
 import 'package:nus_orbital_chronos/pages/home.dart';
 import 'package:nus_orbital_chronos/pages/loading.dart';
 import 'package:nus_orbital_chronos/pages/pomodoro.dart';
 import 'package:nus_orbital_chronos/pages/timer_config.dart';
 import 'package:nus_orbital_chronos/pages/break_time.dart';
+import 'package:nus_orbital_chronos/pages/budget_planner.dart';
 
+// Import services
 import 'package:nus_orbital_chronos/services/timer_data.dart';
 
 void main() =>runApp(MaterialApp(
@@ -14,6 +19,7 @@ void main() =>runApp(MaterialApp(
 //    '/': (context) => Loading(),
     '/home': (context) => Home(),
     '/timer_config': (context) => TimerConfig(),
+    '/budget_planner': (context) => BudgetPlanner(),
   },
 
   onGenerateRoute: (settings) {

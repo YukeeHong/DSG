@@ -11,7 +11,8 @@ class _HomeState extends State<Home> {
   @override
 
   List<Service> services = [
-    Service(title: 'Focus Mode', location: 'pages/timer_config.dart', appIcon: 'target.png'),
+    Service(title: 'Focus Mode', location: '/timer_config', appIcon: 'target.png'),
+    Service(title: 'Budget Planner', location: '/budget_planner', appIcon: 'dollar.png'),
   ];
 
   Widget build(BuildContext context) {
@@ -29,7 +30,7 @@ class _HomeState extends State<Home> {
             child: Card(
               child: ListTile(
                 onTap: () {
-                  Navigator.pushNamed(context, '/timer_config');
+                  Navigator.pushNamed(context, services[index].location);
                 },
                 title: Text(services[index].title),
                 leading: CircleAvatar(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nus_orbital_chronos/services/bill.dart';
 
 class BillList extends StatelessWidget {

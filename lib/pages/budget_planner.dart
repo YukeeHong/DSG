@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+  import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nus_orbital_chronos/services/add_bill.dart';
 import 'package:nus_orbital_chronos/services/bill_list.dart';
 import 'package:nus_orbital_chronos/services/bill.dart';
@@ -9,11 +10,17 @@ class BudgetPlanner extends StatefulWidget {
 }
 
 class _BudgetPlannerState extends State<BudgetPlanner> {
-  final List<Bill> _bills = [];
+  late Box<Bill> billsBox;
+
+  @override
+  void initState() {
+    super.initState();
+    billsBox = Hive.box<Bill>('Bills');
+  }
 
   void _addBill(String description, double amount, DateTime date) {
     setState(() {
-      _bills.add(Bill(
+      billsBox.add(Bill(
         description: description,
         amount: amount,
         date: date,
@@ -46,23 +53,31 @@ class _BudgetPlannerState extends State<BudgetPlanner> {
           onPressed: () { Navigator.pop(context); },
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Card(
-            color: Theme.of(context).primaryColor,
-            child: Container(
-              padding: EdgeInsets.all(10),
-              child: Text(
-                'Total Amount: \$${_bills.fold(0.0, (double sum, Bill bill) => sum + bill.amount).toStringAsFixed(2)}',
-                style: TextStyle(fontSize: 20, color: Colors.white),
+      body: ValueListenableBuilder(
+        valueListenable: billsBox.listenable(),
+        builder: (context, Box<Bill> billsBox, _) {
+          final _bills = billsBox.values.toList();
+          final totalAmount = _bills.fold(0.0, (double sum, Bill bill) => sum + bill.amount);
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Card(
+                color: Theme.of(context).primaryColor,
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  child: Text(
+                    'Total Amount: \$${totalAmount.toStringAsFixed(2)}',
+                    style: TextStyle(fontSize: 20, color: Colors.white),
+                  ),
+                ),
               ),
-            ),
-          ),
-          Expanded(
-            child: BillList(_bills),
-          ),
-        ],
+              Expanded(
+                child: BillList(_bills),
+              ),
+            ],
+          );
+        }
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _startAddNewBill(context),

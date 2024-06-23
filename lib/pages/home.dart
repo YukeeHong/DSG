@@ -13,6 +13,7 @@ class _HomeState extends State<Home> {
   List<Service> services = [
     Service(title: 'Focus Mode', location: '/timer_config', appIcon: 'target.png'),
     Service(title: 'Budget Planner', location: '/budget_planner', appIcon: 'dollar.png'),
+    Service(title: 'Schedule', location: '/schedule', appIcon: 'tomato.png'),
   ];
 
   Widget build(BuildContext context) {

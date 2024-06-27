@@ -1,26 +1,22 @@
 import 'package:flutter/material.dart';
-import 'event.dart';
+import 'package:nus_orbital_chronos/services/event.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class EventProvider extends ChangeNotifier {
-  final Map<DateTime, List<Event>> _events = {};
+  final Box<Event> _eventsBox = Hive.box<Event>('Events');
 
   List<Event> getEventsForDay(DateTime day) {
-    return _events[day] ?? [];
+    return _eventsBox.values.where((event) => isSameDay(event.date, day)).toList();
   }
 
   void addEvent(DateTime day, Event event) {
-    if (_events[day] == null) {
-      _events[day] = [];
-    }
-    _events[day]!.add(event);
+    _eventsBox.add(event);
     notifyListeners();
   }
 
   void deleteEvent(DateTime day, Event event) {
-    _events[day]?.remove(event);
-    if (_events[day]?.isEmpty ?? false) {
-      _events.remove(day);
-    }
+    event.delete();
     notifyListeners();
   }
 }

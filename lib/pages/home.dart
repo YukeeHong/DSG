@@ -13,7 +13,7 @@ class _HomeState extends State<Home> {
   List<Service> services = [
     Service(title: 'Focus Mode', location: '/timer_config', appIcon: 'target.png'),
     Service(title: 'Budget Planner', location: '/budget_planner', appIcon: 'dollar.png'),
-    Service(title: 'Schedule', location: '/schedule', appIcon: 'tomato.png'),
+    Service(title: 'Schedule', location: '/schedule', appIcon: 'calendar.png'),
   ];
 
   Widget build(BuildContext context) {
@@ -36,6 +36,7 @@ class _HomeState extends State<Home> {
                 title: Text(services[index].title),
                 leading: CircleAvatar(
                   backgroundImage: AssetImage('assets/${services[index].appIcon}'),
+                  backgroundColor: Colors.white60,
                 ),
               ),
             ),

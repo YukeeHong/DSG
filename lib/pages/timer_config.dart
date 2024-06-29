@@ -16,6 +16,24 @@ class _TimerConfigState extends State<TimerConfig> {
   final numIntervals = TextEditingController();
   final breakDuration = TextEditingController();
 
+  bool repeated = true;
+
+  @override
+  void initState() {
+    super.initState();
+    numIntervals.addListener(_toggleBreak);
+  }
+
+  void _toggleBreak() {
+    setState(() {
+      if (numIntervals.text.isEmpty || int.parse(numIntervals.text) != 1) {
+        repeated = true;
+      } else {
+        repeated = false;
+      }
+    });
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -76,47 +94,49 @@ class _TimerConfigState extends State<TimerConfig> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
-              child: SizedBox(
-                width: 210,
-                child: TextField(
-                  controller: breakDuration,
-                  keyboardType: TextInputType.number,
-                  maxLength: 2,
-                  decoration: InputDecoration(
-                    icon: Icon(Icons.pause),
-                    labelText: 'Break Duration *',
-                    hintText: 'Minutes',
+            if (repeated)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
+                child: SizedBox(
+                  width: 210,
+                  child: TextField(
+                    controller: breakDuration,
+                    keyboardType: TextInputType.number,
+                    maxLength: 2,
+                    decoration: InputDecoration(
+                      icon: Icon(Icons.pause),
+                      labelText: 'Break Duration *',
+                      hintText: 'Minutes',
+                    ),
                   ),
                 ),
               ),
-            ),
+            if (!repeated) SizedBox(height: 88),
             Padding(
               padding: const EdgeInsets.all(50),
               child: TextButton.icon(
                   onPressed: () {
-                    if (interval.text.isEmpty || numIntervals.text.isEmpty || breakDuration.text.isEmpty) {
+                    if (interval.text.isEmpty || numIntervals.text.isEmpty || (repeated && breakDuration.text.isEmpty)) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Please fill in all the required fields')),
                       );
-                    } else if (interval.text.contains('.') || breakDuration.text.contains('.') ||
-                        interval.text.contains(',') || breakDuration.text.contains(',') ||
-                        interval.text.contains('-') || breakDuration.text.contains('-') ||
-                        interval.text.contains(' ') || breakDuration.text.contains(' ')) {
+                    } else if (interval.text.contains('.') || (repeated && breakDuration.text.contains('.')) ||
+                        interval.text.contains(',') || (repeated && breakDuration.text.contains(',')) ||
+                        interval.text.contains('-') || (repeated && breakDuration.text.contains('-')) ||
+                        interval.text.contains(' ') || (repeated && breakDuration.text.contains(' '))) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Please enter only numbers in the required fields')),
                       );
-                    } else if (int.parse(interval.text) == 0 || int.parse(breakDuration.text) == 0) {
+                    } else if (int.parse(interval.text) == 0 || int.parse(numIntervals.text) == 0 || (repeated && int.parse(breakDuration.text) == 0)) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Please use non-zero values in the required fields')),
                       );
                     } else {
                       TimerData data = TimerData(
-                        task: (goal.text).isEmpty ? " " : 'Goal: ${goal.text}',
+                        task: goal.text.isEmpty ? " " : 'Goal: ${goal.text}',
                         dur: int.parse(interval.text),
                         num: int.parse(numIntervals.text),
-                        breakDur: int.parse(breakDuration.text),
+                        breakDur: !repeated ? 0 : int.parse(breakDuration.text),
                       );
                       Navigator.pushNamed(context, '/pomodoro', arguments: data);
                     }

@@ -15,6 +15,7 @@ class _PomodoroState extends State<Pomodoro> {
   late Duration remainingTime;
   bool isPaused = false;
   bool isRunning = true;
+  bool sessionEnded = false;
 
   @override
   void initState() {
@@ -26,6 +27,7 @@ class _PomodoroState extends State<Pomodoro> {
     widget.data.task = 'Session ended, well done!';
     endTime = DateTime.now();
     widget.data.num = 0;
+    sessionEnded = true;
   }
 
   void pauseTimer() {
@@ -86,38 +88,40 @@ class _PomodoroState extends State<Pomodoro> {
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-          FloatingActionButton(
-            backgroundColor: Colors.red[700],
-            onPressed: () {
-              setState(() {
-                if (isPaused) {
-                  resumeTimer();
-                } else {
-                  pauseTimer();
-                }
-                isRunning = !isRunning;
-              });
-            },
-            child: Icon(
-              isPaused ? Icons.play_arrow : Icons.pause,
-              color: Colors.white,
+          if (!sessionEnded)
+            FloatingActionButton(
+              backgroundColor: Colors.red[700],
+              onPressed: () {
+                setState(() {
+                  if (isPaused) {
+                    resumeTimer();
+                  } else {
+                    pauseTimer();
+                  }
+                  isRunning = !isRunning;
+                });
+              },
+              child: Icon(
+                isPaused ? Icons.play_arrow : Icons.pause,
+                color: Colors.white,
+              ),
             ),
-          ),
           SizedBox(width: 10),
-          FloatingActionButton(
-            backgroundColor: Colors.red[700],
-            onPressed: () {
-              setState(() {
-                widget.data.num -= 1;
-                if (widget.data.num > 0) {
-                  Navigator.pushNamed(context, '/break_time', arguments: widget.data);
-                } else {
-                  endSession();
-                }
-              });
-            },
-            child: const Icon(Icons.skip_next, color: Colors.white),
-          ),
+          if (!sessionEnded)
+            FloatingActionButton(
+              backgroundColor: Colors.red[700],
+              onPressed: () {
+                setState(() {
+                  widget.data.num -= 1;
+                  if (widget.data.num > 0) {
+                    Navigator.pushNamed(context, '/break_time', arguments: widget.data);
+                  } else {
+                    endSession();
+                  }
+                });
+              },
+              child: const Icon(Icons.skip_next, color: Colors.white),
+            ),
           SizedBox(width: 10),
           FloatingActionButton(
             backgroundColor: Colors.red[700],

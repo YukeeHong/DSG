@@ -113,7 +113,7 @@ class _TimerConfigState extends State<TimerConfig> {
                       );
                     } else {
                       TimerData data = TimerData(
-                        task: 'Goal: ${goal.text}',
+                        task: (goal.text).isEmpty ? " " : 'Goal: ${goal.text}',
                         dur: int.parse(interval.text),
                         num: int.parse(numIntervals.text),
                         breakDur: int.parse(breakDuration.text),

@@ -16,6 +16,7 @@ class _BreakTimeState extends State<BreakTime> {
   bool isPaused = false;
   bool isRunning = true;
 
+  @override
   void initState() {
     super.initState();
     endTime = DateTime.now().add(Duration(minutes: widget.data.breakDur));
@@ -44,31 +45,29 @@ class _BreakTimeState extends State<BreakTime> {
         backgroundColor: Colors.green[700],
         automaticallyImplyLeading: false,
       ),
-      body: Expanded(
-        child: Center(
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(40),
-                child: Image(image: AssetImage('assets/tomato.png')),
+      body: Center(
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(40),
+              child: Image(image: AssetImage('assets/tomato.png')),
+            ),
+            if (isRunning)
+              TimerCountdown(
+                endTime: endTime,
+                onEnd: () {
+                  Navigator.pushNamed(context, '/pomodoro', arguments: widget.data);
+                },
+                format: CountDownTimerFormat.minutesSeconds,
+                enableDescriptions: false,
+                timeTextStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
+                colonsTextStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
               ),
-              if (isRunning)
-                TimerCountdown(
-                  endTime: endTime,
-                  onEnd: () {
-                    Navigator.pushNamed(context, '/pomodoro', arguments: widget.data);
-                  },
-                  format: CountDownTimerFormat.minutesSeconds,
-                  enableDescriptions: false,
-                  timeTextStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
-                  colonsTextStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
-                ),
-              if (isPaused) Text(
-                  "${remainingTime.inMinutes.toString().padLeft(2, '0')} : ${(remainingTime.inSeconds % 60).toString()}",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40)),
-              Text('Take a break...', style: TextStyle(fontSize: 20),),
-            ],
-          ),
+            if (isPaused) Text(
+                "${remainingTime.inMinutes.toString().padLeft(2, '0')} : ${(remainingTime.inSeconds % 60).toString()}",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40)),
+            Text('Take a break...', style: TextStyle(fontSize: 20),),
+          ],
         ),
       ),
       floatingActionButton: Row(

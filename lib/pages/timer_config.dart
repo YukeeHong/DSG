@@ -111,7 +111,6 @@ class _TimerConfigState extends State<TimerConfig> {
                   ),
                 ),
               ),
-            if (!repeated) SizedBox(height: 88),
             Padding(
               padding: const EdgeInsets.all(50),
               child: TextButton.icon(

@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 
 // Import pages
 import 'package:nus_orbital_chronos/pages/home.dart';
-import 'package:nus_orbital_chronos/pages/loading.dart';
 import 'package:nus_orbital_chronos/pages/pomodoro.dart';
 import 'package:nus_orbital_chronos/pages/timer_config.dart';
 import 'package:nus_orbital_chronos/pages/break_time.dart';

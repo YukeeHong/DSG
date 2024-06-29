@@ -12,6 +12,9 @@ class Pomodoro extends StatefulWidget {
 
 class _PomodoroState extends State<Pomodoro> {
   late DateTime endTime;
+  late Duration remainingTime;
+  bool isPaused = false;
+  bool isRunning = true;
 
   @override
   void initState() {
@@ -23,6 +26,20 @@ class _PomodoroState extends State<Pomodoro> {
     widget.data.task = 'Session ended, well done!';
     endTime = DateTime.now();
     widget.data.num = 0;
+  }
+
+  void pauseTimer() {
+    setState(() {
+      isPaused = true;
+      remainingTime = endTime.difference(DateTime.now());
+    });
+  }
+
+  void resumeTimer() {
+    setState(() {
+      isPaused = false;
+      endTime = DateTime.now().add(remainingTime);
+    });
   }
 
   Widget build(BuildContext context) {
@@ -40,31 +57,53 @@ class _PomodoroState extends State<Pomodoro> {
               padding: const EdgeInsets.all(40),
               child: Image(image: AssetImage('assets/tomato.png')),
             ),
-            TimerCountdown(
-              endTime: endTime,
-              onEnd: () {
-                setState(() {
-                  widget.data.num -= 1;
-                  if (widget.data.num > 0) {
-                    Navigator.pushNamed(context, '/break_time', arguments: widget.data);
-                  } else {
-                    endSession();
-                  }
-                });
-              },
-              format: CountDownTimerFormat.minutesSeconds,
-              enableDescriptions: false,
-              timeTextStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
-              colonsTextStyle: TextStyle(fontSize: 40),
-            ),
+            if (isRunning)
+              TimerCountdown(
+                endTime: endTime,
+                onEnd: () {
+                  setState(() {
+                    widget.data.num -= 1;
+                    if (widget.data.num > 0) {
+                      Navigator.pushNamed(context, '/break_time', arguments: widget.data);
+                    } else {
+                      endSession();
+                    }
+                  });
+                },
+                format: CountDownTimerFormat.minutesSeconds,
+                enableDescriptions: false,
+                timeTextStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
+                colonsTextStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
+              ),
+            if (isPaused) Text(
+              "${remainingTime.inMinutes.toString().padLeft(2, '0')} : ${(remainingTime.inSeconds % 60).toString()}",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40)),
             Text(widget.data.task, style: TextStyle(fontSize: 20),),
             Text('Intervals remaining: ${widget.data.num}', style: TextStyle(fontSize: 20),),
           ],
         ),
       ),
-      floatingActionButton: Column(
+      floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
+          FloatingActionButton(
+            backgroundColor: Colors.red[700],
+            onPressed: () {
+              setState(() {
+                if (isPaused) {
+                  resumeTimer();
+                } else {
+                  pauseTimer();
+                }
+                isRunning = !isRunning;
+              });
+            },
+            child: Icon(
+              isPaused ? Icons.play_arrow : Icons.pause,
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(width: 10),
           FloatingActionButton(
             backgroundColor: Colors.red[700],
             onPressed: () {
@@ -79,7 +118,7 @@ class _PomodoroState extends State<Pomodoro> {
             },
             child: const Icon(Icons.skip_next, color: Colors.white),
           ),
-          SizedBox(height: 10),
+          SizedBox(width: 10),
           FloatingActionButton(
             backgroundColor: Colors.red[700],
             onPressed: () {
@@ -88,7 +127,7 @@ class _PomodoroState extends State<Pomodoro> {
             child: const Icon(Icons.sensor_door_outlined, color: Colors.white),
           ),
         ],
-      ),
+      ) ,
     );
   }
 }

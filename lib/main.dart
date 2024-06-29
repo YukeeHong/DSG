@@ -20,12 +20,16 @@ import 'package:nus_orbital_chronos/services/event_provider.dart';
 import 'package:nus_orbital_chronos/services/event.dart';
 
 void main() async {
+  // Ensure that Flutter binding is initialized
   WidgetsFlutterBinding.ensureInitialized();
 
+  //Initialize Hive
   await Hive.initFlutter();
+
   // Register Hive Adapters
   Hive.registerAdapter(BillAdapter());
   Hive.registerAdapter(EventAdapter());
+
   // Open Hive boxes
   await Hive.openBox<Bill>('Bills'); // TypeId: 0
   await Hive.openBox<Event>('Events'); // TypeId: 1
@@ -36,7 +40,6 @@ void main() async {
         initialRoute: '/home',
 
         routes: {
-          //    '/': (context) => Loading(),
           '/home': (context) => Home(),
           '/timer_config': (context) => TimerConfig(),
           '/budget_planner': (context) => BudgetPlanner(),

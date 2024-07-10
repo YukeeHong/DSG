@@ -12,12 +12,16 @@ import 'package:nus_orbital_chronos/pages/timer_config.dart';
 import 'package:nus_orbital_chronos/pages/break_time.dart';
 import 'package:nus_orbital_chronos/pages/budget_planner.dart';
 import 'package:nus_orbital_chronos/pages/schedule.dart';
+import 'package:nus_orbital_chronos/pages/gpa_calc.dart';
 
 // Import services
 import 'package:nus_orbital_chronos/services/timer_data.dart';
 import 'package:nus_orbital_chronos/services/bill.dart';
 import 'package:nus_orbital_chronos/services/event_provider.dart';
 import 'package:nus_orbital_chronos/services/event.dart';
+import 'package:nus_orbital_chronos/services/semester.dart';
+import 'package:nus_orbital_chronos/services/course.dart';
+
 
 void main() async {
   // Ensure that Flutter binding is initialized
@@ -29,10 +33,14 @@ void main() async {
   // Register Hive Adapters
   Hive.registerAdapter(BillAdapter());
   Hive.registerAdapter(EventAdapter());
+  Hive.registerAdapter(SemesterAdapter());
+  Hive.registerAdapter(CourseAdapter());
 
   // Open Hive boxes
   await Hive.openBox<Bill>('Bills'); // TypeId: 0
   await Hive.openBox<Event>('Events'); // TypeId: 1
+  await Hive.openBox<Semester>('Semesters'); // TypeId: 2
+  await Hive.openBox<Course>('Courses'); // TypeId: 3
 
   runApp(ChangeNotifierProvider(
     create: (context) => EventProvider(),
@@ -44,6 +52,7 @@ void main() async {
           '/timer_config': (context) => TimerConfig(),
           '/budget_planner': (context) => BudgetPlanner(),
           '/schedule': (context) => CalendarPage(),
+          '/gpa_calc': (context) => GPACalc(),
         },
 
         onGenerateRoute: (settings) {

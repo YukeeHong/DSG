@@ -14,6 +14,7 @@ class _HomeState extends State<Home> {
     Service(title: 'Focus Mode', location: '/timer_config', appIcon: 'target.png'),
     Service(title: 'Budget Planner', location: '/budget_planner', appIcon: 'dollar.png'),
     Service(title: 'Schedule', location: '/schedule', appIcon: 'calendar.png'),
+    Service(title: 'GPA Calculator', location: '/gpa_calc', appIcon: 'tomato.png'),
   ];
 
   Widget build(BuildContext context) {

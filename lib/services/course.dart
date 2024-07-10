@@ -14,7 +14,7 @@ class Course extends HiveObject {
   final int credits;
 
   @HiveField(3)
-  final bool isIncludedInGPA;
+  final int isIncludedInGPA;
 
   @HiveField(4)
   final int sem;
@@ -26,7 +26,7 @@ class Course extends HiveObject {
     required this.isIncludedInGPA,
     required this.sem,
   });
-
+/**
   double get gradePoint {
     switch (grade) {
       case 'A+':
@@ -54,5 +54,5 @@ class Course extends HiveObject {
       default:
         return 0.0;
     }
-  }
+  }*/
 }

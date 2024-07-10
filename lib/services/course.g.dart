@@ -20,7 +20,7 @@ class CourseAdapter extends TypeAdapter<Course> {
       name: fields[0] as String,
       grade: fields[1] as String,
       credits: fields[2] as int,
-      isIncludedInGPA: fields[3] as bool,
+      isIncludedInGPA: fields[3] as int,
       sem: fields[4] as int,
     );
   }

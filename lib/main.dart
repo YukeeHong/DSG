@@ -22,7 +22,6 @@ import 'package:nus_orbital_chronos/services/event.dart';
 import 'package:nus_orbital_chronos/services/semester.dart';
 import 'package:nus_orbital_chronos/services/course.dart';
 
-
 void main() async {
   // Ensure that Flutter binding is initialized
   WidgetsFlutterBinding.ensureInitialized();

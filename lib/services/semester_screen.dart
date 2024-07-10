@@ -23,14 +23,14 @@ class _SemesterScreenState extends State<SemesterScreen> {
   void initState() {
     super.initState();
     semesterBox = Hive.box<Semester>('Semesters');
-    courseBox = Hive.box<Course>('Courses'); //test
+    courseBox = Hive.box<Course>('Courses');
   }
 
   void _addCourse() {
     final String courseName = _courseNameController.text;
     final String grade = _gradeController.text;
     final int credits = int.parse(_creditsController.text);
-    final course = Course(name: courseName, grade: grade, credits: credits, isIncludedInGPA: true, sem: widget.sem);
+    final course = Course(name: courseName, grade: grade, credits: credits, isIncludedInGPA: 1, sem: widget.sem);
 
     final courseKey = '${widget.sem}_$courseName';
     courseBox.put(courseKey, course);

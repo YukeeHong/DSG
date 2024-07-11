@@ -16,7 +16,6 @@ class SemesterScreen extends StatefulWidget {
 class _SemesterScreenState extends State<SemesterScreen> {
   final _courseNameController = TextEditingController();
   final _creditsController = TextEditingController();
-  bool isPassFail = false;
   String selectedGrade = 'A+';
   late Box<Semester> semesterBox;
   late Box<Course> courseBox;
@@ -28,11 +27,21 @@ class _SemesterScreenState extends State<SemesterScreen> {
     courseBox = Hive.box<Course>('Courses');
   }
 
+  bool checkPassFail(String grade) {
+    switch (grade) {
+      case 'S/CS':
+      case 'U/CU':
+        return true;
+      default:
+        return false;
+    }
+  }
+
   void _addCourse() {
     final String courseName = _courseNameController.text;
     final String grade = selectedGrade;
     final int credits = int.parse(_creditsController.text);
-    final int included = isPassFail ? 0 : 1;
+    final int included = checkPassFail(grade) ? 0 : 1;
     final course = Course(name: courseName, grade: grade, credits: credits, isIncludedInGPA: included, sem: widget.sem);
 
     final courseKey = '${widget.sem}_$courseName';
@@ -78,13 +87,18 @@ class _SemesterScreenState extends State<SemesterScreen> {
               decoration: InputDecoration(labelText: 'Course Name'),
             ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget> [
+                TextField(
+                  controller: _creditsController,
+                  decoration: InputDecoration(labelText: 'Credits'),
+                  keyboardType: TextInputType.number,
+                  maxLength: 2,
+                ),
+                SizedBox(width: 50),
                 DropdownButton(
                   value: selectedGrade,
                   icon: const Icon(Icons.arrow_drop_down),
-                  underline: Container(
-                    height: 2,
-                  ),
                   onChanged: (String? newGrade) {
                     setState(() {
                       selectedGrade = newGrade!;
@@ -135,23 +149,15 @@ class _SemesterScreenState extends State<SemesterScreen> {
                       value: 'F',
                       child: Text('F'),
                     ),
+                    DropdownMenuItem(
+                      value: 'S/CS',
+                      child: Text('S/CS'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'U/CU',
+                      child: Text('U/CU'),
+                    ),
                   ],
-                ),
-                TextField(
-                  controller: _creditsController,
-                  decoration: InputDecoration(labelText: 'Credits'),
-                  keyboardType: TextInputType.number,
-                  maxLength: 2,
-                ),
-                Checkbox(
-                  checkColor: Colors.white,
-                  activeColor: Colors.indigo,
-                  value: isPassFail,
-                  onChanged: (bool? isPassFail) {
-                    setState(() {
-                      isPassFail = isPassFail!;
-                    });
-                  }
                 ),
               ],
             ),

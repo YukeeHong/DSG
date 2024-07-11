@@ -6,9 +6,11 @@ class computeGPA {
     int totalCredits = 0;
 
     for (var course in courses) {
-      double gradePoint = course.gradePoint;
-      totalPoints += gradePoint * course.credits;
-      totalCredits += course.credits;
+      if (course.isIncludedInGPA == 1) {
+        double gradePoint = course.gradePoint;
+        totalPoints += gradePoint * course.credits;
+        totalCredits += course.credits;
+      }
     }
 
     return totalCredits == 0 ? 0 : totalPoints / totalCredits;

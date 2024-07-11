@@ -51,9 +51,14 @@ class _GPACalcState extends State<GPACalc> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
-            Text(
-              'Current GPA: ${computeGPA.calculateGPA(courseBox.values.toList()).toStringAsFixed(2)}',
-              style: TextStyle(fontSize: 24),
+            ValueListenableBuilder(
+                valueListenable: courseBox.listenable(),
+                builder: (context, Box<Course> box, _) {
+                  return Text(
+                    'Current GPA: ${computeGPA.calculateGPA(courseBox.values.toList()).toStringAsFixed(2)}',
+                    style: TextStyle(fontSize: 24),
+                  );
+                }
             ),
             SizedBox(height: 20),
             ElevatedButton(

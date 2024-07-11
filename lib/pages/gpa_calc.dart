@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nus_orbital_chronos/services/semester.dart';
-import 'package:nus_orbital_chronos/services/semester_screen.dart';
+import 'package:nus_orbital_chronos/services/course.dart';
+import 'package:nus_orbital_chronos/pages/semester_screen.dart';
+import 'package:nus_orbital_chronos/services/computeGPA.dart';
 
 class GPACalc extends StatefulWidget {
   @override
@@ -10,11 +12,13 @@ class GPACalc extends StatefulWidget {
 
 class _GPACalcState extends State<GPACalc> {
   late Box<Semester> semesterBox;
+  late Box<Course> courseBox;
 
   @override
   void initState() {
     super.initState();
     semesterBox = Hive.box<Semester>('Semesters');
+    courseBox = Hive.box<Course>('Courses');
   }
 
   void _addSemester() {
@@ -47,6 +51,11 @@ class _GPACalcState extends State<GPACalc> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
+            Text(
+              'Current GPA: ${computeGPA.calculateGPA(courseBox.values.toList()).toStringAsFixed(2)}',
+              style: TextStyle(fontSize: 24),
+            ),
+            SizedBox(height: 20),
             ElevatedButton(
               onPressed: _addSemester,
               child: Text('Add Semester'),

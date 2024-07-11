@@ -69,6 +69,7 @@ class _SemesterScreenState extends State<SemesterScreen> {
     }
 
     return Scaffold(
+      backgroundColor: Colors.indigo[200],
       appBar: AppBar(
         title: Text('Semester ${widget.sem}', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.indigo,
@@ -82,115 +83,152 @@ class _SemesterScreenState extends State<SemesterScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
-            TextField(
-              controller: _courseNameController,
-              decoration: InputDecoration(labelText: 'Course Name'),
-            ),
-            Container(
-              height: 40,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget> [
-                  TextField(
-                    controller: _creditsController,
-                    decoration: InputDecoration(labelText: 'Credits'),
-                    keyboardType: TextInputType.number,
-                    maxLength: 2,
-                  ),
-                  SizedBox(width: 50),
-                  DropdownButton(
-                    value: selectedGrade,
-                    icon: const Icon(Icons.arrow_drop_down),
-                    underline: Container(height: 2),
-                    onChanged: (String? newGrade) {
-                      setState(() {
-                        selectedGrade = newGrade!;
-                      });
-                    },
-                    items: const [
-                      DropdownMenuItem(
-                        value: 'A+',
-                        child: Text('A+'),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: <Widget>[
+                    TextField(
+                      controller: _courseNameController,
+                      decoration: InputDecoration(labelText: 'Course Name'),
+                    ),
+                    Container(
+                      height: 120,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          SizedBox(
+                            width: 100,
+                            child: TextField(
+                              controller: _creditsController,
+                              decoration: InputDecoration(labelText: 'Credits'),
+                              keyboardType: TextInputType.number,
+                              maxLength: 2,
+                            ),
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Text('Grade', style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.6))),
+                              SizedBox(width: 10),
+                              SizedBox(
+                                width: 50,
+                                child: DropdownButton(
+                                  value: selectedGrade,
+                                  icon: const Icon(Icons.arrow_drop_down),
+                                  onChanged: (String? newGrade) {
+                                    setState(() {
+                                      selectedGrade = newGrade!;
+                                    });
+                                  },
+                                  items: const [
+                                    DropdownMenuItem(
+                                      value: 'A+',
+                                      child: Text('A+'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'A',
+                                      child: Text('A'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'A-',
+                                      child: Text('A-'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'B+',
+                                      child: Text('B+'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'B',
+                                      child: Text('B'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'B-',
+                                      child: Text('B-'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'C+',
+                                      child: Text('C+'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'C',
+                                      child: Text('C'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'D+',
+                                      child: Text('D+'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'D',
+                                      child: Text('D'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'F',
+                                      child: Text('F'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'S/CS',
+                                      child: Text('S/CS'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'U/CU',
+                                      child: Text('U/CU'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      DropdownMenuItem(
-                        value: 'A',
-                        child: Text('A'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'A-',
-                        child: Text('A-'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'B+',
-                        child: Text('B+'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'B',
-                        child: Text('B'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'B-',
-                        child: Text('B-'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'C+',
-                        child: Text('C+'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'C',
-                        child: Text('C'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'D+',
-                        child: Text('D+'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'D',
-                        child: Text('D'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'F',
-                        child: Text('F'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'S/CS',
-                        child: Text('S/CS'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'U/CU',
-                        child: Text('U/CU'),
-                      ),
-                    ],
-                  ),
-                ],
+                    ),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: _addCourse,
+                      child: Text('Add Course'),
+                    ),
+                  ],
+
+                ),
               ),
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _addCourse,
-              child: Text('Add Course'),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Current GPA: ${computeGPA.calculateGPA(courses).toStringAsFixed(2)}',
-              style: TextStyle(fontSize: 24),
+            Container(
+              width: double.infinity,
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Semester GPA: ${computeGPA.calculateGPA(courses).toStringAsFixed(2)}',
+                      style: TextStyle(fontSize: 24),
+                    ),
+                  ),
+                ),
+              ),
             ),
             Expanded(
               child: ListView.builder(
                 itemCount: courses.length,
                 itemBuilder: (context, index) {
                   final course = courses[index];
-                  return ListTile(
-                    title: Text(course.name),
-                    subtitle: Text('Grade: ${course.grade}, Credits: ${course.credits}'),
-                    tileColor: Colors.indigoAccent[100],
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () {
-                        setState(() {
-                          _deleteCourse(index, course.name);
-                        });
-                      },
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 4.0),
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      child: ListTile(
+                        title: Text(course.name),
+                        subtitle: Text('Grade: ${course.grade}, Credits: ${course.credits}'),
+                        trailing: IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () {
+                            setState(() {
+                              _deleteCourse(index, course.name);
+                            });
+                          },
+                        ),
+                      ),
                     ),
                   );
                 },

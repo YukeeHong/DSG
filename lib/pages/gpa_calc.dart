@@ -38,6 +38,7 @@ class _GPACalcState extends State<GPACalc> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.indigo[200],
       appBar: AppBar(
         title: const Text('GPA Calculator', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.indigo,
@@ -51,14 +52,27 @@ class _GPACalcState extends State<GPACalc> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
-            ValueListenableBuilder(
-                valueListenable: courseBox.listenable(),
-                builder: (context, Box<Course> box, _) {
-                  return Text(
-                    'Current GPA: ${computeGPA.calculateGPA(courseBox.values.toList()).toStringAsFixed(2)}',
-                    style: TextStyle(fontSize: 24),
-                  );
-                }
+            Container(
+              width: double.infinity,
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Column(
+                    children: <Widget>[
+                      Text('Current GPA', style: TextStyle(fontSize: 24)),
+                      ValueListenableBuilder(
+                          valueListenable: courseBox.listenable(),
+                          builder: (context, Box<Course> box, _) {
+                            return Text(
+                              '${computeGPA.calculateGPA(courseBox.values.toList()).toStringAsFixed(2)}',
+                              style: TextStyle(fontSize: 24),
+                            );
+                          }
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
             SizedBox(height: 20),
             ElevatedButton(
@@ -75,23 +89,30 @@ class _GPACalcState extends State<GPACalc> {
                     itemCount: semesters.length,
                     itemBuilder: (context, index) {
                       final semester = semesters[index];
-                      return ListTile(
-                        title: Text('Semester ${semester.sem}'),
-                        tileColor: Colors.indigoAccent[100],
-                        trailing: IconButton(
-                          icon: Icon(Icons.delete),
-                          onPressed: () {
-                            box.delete(box.keyAt(index));
-                          },
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SemesterScreen(sem: semester.sem),
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 4.0),
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          child: ListTile(
+                            title: Text('Semester ${semester.sem}'),
+                            trailing: IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {
+                                box.delete(box.keyAt(index));
+                              },
                             ),
-                          );
-                        },
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SemesterScreen(sem: semester.sem),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
                       );
                     },
                   );

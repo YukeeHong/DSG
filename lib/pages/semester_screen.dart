@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:nus_orbital_chronos/services/course.dart';
 import 'package:nus_orbital_chronos/services/semester.dart';
-import 'package:nus_orbital_chronos/services/computeGPA.dart';
+import 'package:nus_orbital_chronos/services/compute_gpa.dart';
 
 class SemesterScreen extends StatefulWidget {
   final int sem;
@@ -15,8 +15,9 @@ class SemesterScreen extends StatefulWidget {
 
 class _SemesterScreenState extends State<SemesterScreen> {
   final _courseNameController = TextEditingController();
-  final _gradeController = TextEditingController();
   final _creditsController = TextEditingController();
+  bool isPassFail = false;
+  String selectedGrade = 'A+';
   late Box<Semester> semesterBox;
   late Box<Course> courseBox;
 
@@ -29,15 +30,15 @@ class _SemesterScreenState extends State<SemesterScreen> {
 
   void _addCourse() {
     final String courseName = _courseNameController.text;
-    final String grade = _gradeController.text;
+    final String grade = selectedGrade;
     final int credits = int.parse(_creditsController.text);
-    final course = Course(name: courseName, grade: grade, credits: credits, isIncludedInGPA: 1, sem: widget.sem);
+    final int included = isPassFail ? 0 : 1;
+    final course = Course(name: courseName, grade: grade, credits: credits, isIncludedInGPA: included, sem: widget.sem);
 
     final courseKey = '${widget.sem}_$courseName';
     courseBox.put(courseKey, course);
 
     _courseNameController.clear();
-    _gradeController.clear();
     _creditsController.clear();
     setState(() {});
   }
@@ -60,7 +61,13 @@ class _SemesterScreenState extends State<SemesterScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Semester ${widget.sem}'),
+        title: Text('Semester ${widget.sem}', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.indigo,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded),
+          color: Colors.white,
+          onPressed: () { Navigator.pop(context); },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -70,14 +77,83 @@ class _SemesterScreenState extends State<SemesterScreen> {
               controller: _courseNameController,
               decoration: InputDecoration(labelText: 'Course Name'),
             ),
-            TextField(
-              controller: _gradeController,
-              decoration: InputDecoration(labelText: 'Grade'),
-            ),
-            TextField(
-              controller: _creditsController,
-              decoration: InputDecoration(labelText: 'Credits'),
-              keyboardType: TextInputType.number,
+            Row(
+              children: <Widget> [
+                DropdownButton(
+                  value: selectedGrade,
+                  icon: const Icon(Icons.arrow_drop_down),
+                  underline: Container(
+                    height: 2,
+                  ),
+                  onChanged: (String? newGrade) {
+                    setState(() {
+                      selectedGrade = newGrade!;
+                    });
+                  },
+                  items: const [
+                    DropdownMenuItem(
+                      value: 'A+',
+                      child: Text('A+'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'A',
+                      child: Text('A'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'A-',
+                      child: Text('A-'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'B+',
+                      child: Text('B+'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'B',
+                      child: Text('B'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'B-',
+                      child: Text('B-'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'C+',
+                      child: Text('C+'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'C',
+                      child: Text('C'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'D+',
+                      child: Text('D+'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'D',
+                      child: Text('D'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'F',
+                      child: Text('F'),
+                    ),
+                  ],
+                ),
+                TextField(
+                  controller: _creditsController,
+                  decoration: InputDecoration(labelText: 'Credits'),
+                  keyboardType: TextInputType.number,
+                  maxLength: 2,
+                ),
+                Checkbox(
+                  checkColor: Colors.white,
+                  activeColor: Colors.indigo,
+                  value: isPassFail,
+                  onChanged: (bool? isPassFail) {
+                    setState(() {
+                      isPassFail = isPassFail!;
+                    });
+                  }
+                ),
+              ],
             ),
             SizedBox(height: 20),
             ElevatedButton(

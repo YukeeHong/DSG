@@ -11,19 +11,4 @@ class Semester extends HiveObject {
   Semester({
     required this.sem,
   });
-/**
-  double get gpa {
-    double totalPoints = 0.0;
-    int totalCredits = 0;
-
-    for (var course in courses) {
-      if (course.isIncludedInGPA) {
-        totalPoints += course.gradePoint * course.credits;
-        totalCredits += course.credits;
-      }
-    }
-
-    return totalCredits > 0 ? totalPoints / totalCredits : 0.0;
-  }
-    */
 }

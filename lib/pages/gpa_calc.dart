@@ -3,7 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nus_orbital_chronos/services/semester.dart';
 import 'package:nus_orbital_chronos/services/course.dart';
 import 'package:nus_orbital_chronos/pages/semester_screen.dart';
-import 'package:nus_orbital_chronos/services/computeGPA.dart';
+import 'package:nus_orbital_chronos/services/compute_gpa.dart';
 
 class GPACalc extends StatefulWidget {
   @override

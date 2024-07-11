@@ -77,6 +77,7 @@ class _GPACalcState extends State<GPACalc> {
                       final semester = semesters[index];
                       return ListTile(
                         title: Text('Semester ${semester.sem}'),
+                        tileColor: Colors.indigoAccent[100],
                         trailing: IconButton(
                           icon: Icon(Icons.delete),
                           onPressed: () {

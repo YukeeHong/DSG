@@ -86,80 +86,84 @@ class _SemesterScreenState extends State<SemesterScreen> {
               controller: _courseNameController,
               decoration: InputDecoration(labelText: 'Course Name'),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget> [
-                TextField(
-                  controller: _creditsController,
-                  decoration: InputDecoration(labelText: 'Credits'),
-                  keyboardType: TextInputType.number,
-                  maxLength: 2,
-                ),
-                SizedBox(width: 50),
-                DropdownButton(
-                  value: selectedGrade,
-                  icon: const Icon(Icons.arrow_drop_down),
-                  onChanged: (String? newGrade) {
-                    setState(() {
-                      selectedGrade = newGrade!;
-                    });
-                  },
-                  items: const [
-                    DropdownMenuItem(
-                      value: 'A+',
-                      child: Text('A+'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'A',
-                      child: Text('A'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'A-',
-                      child: Text('A-'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'B+',
-                      child: Text('B+'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'B',
-                      child: Text('B'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'B-',
-                      child: Text('B-'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'C+',
-                      child: Text('C+'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'C',
-                      child: Text('C'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'D+',
-                      child: Text('D+'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'D',
-                      child: Text('D'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'F',
-                      child: Text('F'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'S/CS',
-                      child: Text('S/CS'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'U/CU',
-                      child: Text('U/CU'),
-                    ),
-                  ],
-                ),
-              ],
+            Container(
+              height: 40,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget> [
+                  TextField(
+                    controller: _creditsController,
+                    decoration: InputDecoration(labelText: 'Credits'),
+                    keyboardType: TextInputType.number,
+                    maxLength: 2,
+                  ),
+                  SizedBox(width: 50),
+                  DropdownButton(
+                    value: selectedGrade,
+                    icon: const Icon(Icons.arrow_drop_down),
+                    underline: Container(height: 2),
+                    onChanged: (String? newGrade) {
+                      setState(() {
+                        selectedGrade = newGrade!;
+                      });
+                    },
+                    items: const [
+                      DropdownMenuItem(
+                        value: 'A+',
+                        child: Text('A+'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'A',
+                        child: Text('A'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'A-',
+                        child: Text('A-'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'B+',
+                        child: Text('B+'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'B',
+                        child: Text('B'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'B-',
+                        child: Text('B-'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'C+',
+                        child: Text('C+'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'C',
+                        child: Text('C'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'D+',
+                        child: Text('D+'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'D',
+                        child: Text('D'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'F',
+                        child: Text('F'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'S/CS',
+                        child: Text('S/CS'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'U/CU',
+                        child: Text('U/CU'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
             SizedBox(height: 20),
             ElevatedButton(
@@ -179,6 +183,7 @@ class _SemesterScreenState extends State<SemesterScreen> {
                   return ListTile(
                     title: Text(course.name),
                     subtitle: Text('Grade: ${course.grade}, Credits: ${course.credits}'),
+                    tileColor: Colors.indigoAccent[100],
                     trailing: IconButton(
                       icon: Icon(Icons.delete),
                       onPressed: () {

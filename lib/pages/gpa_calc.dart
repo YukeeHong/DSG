@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:nus_orbital_chronos/pages/grade_point_settings.dart';
+import 'package:nus_orbital_chronos/services/grade_points.dart';
 import 'package:nus_orbital_chronos/services/semester.dart';
 import 'package:nus_orbital_chronos/services/course.dart';
 import 'package:nus_orbital_chronos/pages/semester_screen.dart';
@@ -13,26 +15,50 @@ class GPACalc extends StatefulWidget {
 class _GPACalcState extends State<GPACalc> {
   late Box<Semester> semesterBox;
   late Box<Course> courseBox;
+  late Box<GradePoints> gradesBox;
 
   @override
   void initState() {
     super.initState();
     semesterBox = Hive.box<Semester>('Semesters');
     courseBox = Hive.box<Course>('Courses');
+    gradesBox = Hive.box<GradePoints>('GradePoints');
   }
 
   void _addSemester() {
+    if (semesterBox.length >= 12) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('You can only add up to 12 semesters')),
+      );
+      return;
+    }
+
     var semesters = semesterBox.values.toList();
+    semesters.sort((a, b) => a.sem.compareTo(b.sem));
     int lowestFreeSem = 1;
-    for (int i = 0; i < semesters.length; i++) {
-      if (lowestFreeSem != semesters[i].sem) {
+
+    for (var semester in semesters) {
+      if (semester.sem == lowestFreeSem) {
+        lowestFreeSem++;
+      } else {
         break;
       }
-      lowestFreeSem += 1;
     }
 
     semesterBox.put('Semester ${lowestFreeSem}', Semester(sem: lowestFreeSem));
     setState(() {});
+  }
+
+  void _deleteSemester(int sem) {
+    var courses = courseBox.values.toList();
+
+    for (Course course in courses) {
+      if (course.sem == sem) {
+        courseBox.delete('${sem}_${course.name}');
+      }
+    }
+
+    semesterBox.delete('Semester $sem');
   }
 
   @override
@@ -47,6 +73,18 @@ class _GPACalcState extends State<GPACalc> {
           color: Colors.white,
           onPressed: () { Navigator.pop(context); },
         ),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => GradePointSettings()),
+              );
+            },
+            icon: Icon(Icons.settings),
+            color: Colors.white,
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -62,10 +100,15 @@ class _GPACalcState extends State<GPACalc> {
                       Text('Current GPA', style: TextStyle(fontSize: 24)),
                       ValueListenableBuilder(
                           valueListenable: courseBox.listenable(),
-                          builder: (context, Box<Course> box, _) {
-                            return Text(
-                              '${computeGPA.calculateGPA(courseBox.values.toList()).toStringAsFixed(2)}',
-                              style: TextStyle(fontSize: 24),
+                          builder: (context, a, _) {
+                            return ValueListenableBuilder(
+                              valueListenable: gradesBox.listenable(),
+                              builder: (context, b, _) {
+                                return Text(
+                                  '${computeGPA.calculateGPA(courseBox.values.toList()).toStringAsFixed(2)}',
+                                  style: TextStyle(fontSize: 24),
+                                );
+                              }
                             );
                           }
                       ),
@@ -85,10 +128,12 @@ class _GPACalcState extends State<GPACalc> {
                 valueListenable: semesterBox.listenable(),
                 builder: (context, Box<Semester> box, _) {
                   var semesters = box.values.toList();
+                  semesters.sort((a, b) => a.sem.compareTo(b.sem));
                   return ListView.builder(
                     itemCount: semesters.length,
                     itemBuilder: (context, index) {
                       final semester = semesters[index];
+                      final key = semester.sem;
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 4.0),
                         child: Card(
@@ -96,11 +141,11 @@ class _GPACalcState extends State<GPACalc> {
                             borderRadius: BorderRadius.circular(15.0),
                           ),
                           child: ListTile(
-                            title: Text('Semester ${semester.sem}'),
+                            title: Text('Semester $key'),
                             trailing: IconButton(
                               icon: Icon(Icons.delete),
                               onPressed: () {
-                                box.delete(box.keyAt(index));
+                                _deleteSemester(key);
                               },
                             ),
                             onTap: () {

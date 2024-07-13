@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-//import 'course.dart';
 
 part 'semester.g.dart';
 

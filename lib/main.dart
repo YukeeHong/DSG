@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 // Import Hive
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:nus_orbital_chronos/pages/grade_point_settings.dart';
+import 'package:nus_orbital_chronos/services/grade_points.dart';
 // Import Provider
 import 'package:provider/provider.dart';
 
@@ -34,12 +36,14 @@ void main() async {
   Hive.registerAdapter(EventAdapter());
   Hive.registerAdapter(SemesterAdapter());
   Hive.registerAdapter(CourseAdapter());
+  Hive.registerAdapter(GradePointsAdapter());
 
   // Open Hive boxes
   await Hive.openBox<Bill>('Bills'); // TypeId: 0
   await Hive.openBox<Event>('Events'); // TypeId: 1
   await Hive.openBox<Semester>('Semesters'); // TypeId: 2
   await Hive.openBox<Course>('Courses'); // TypeId: 3
+  await Hive.openBox<GradePoints>('GradePoints'); // TypeId: 4
 
   runApp(ChangeNotifierProvider(
     create: (context) => EventProvider(),
@@ -70,6 +74,7 @@ void main() async {
               },
             );
           }
+          return null;
         }
     ),
   ));

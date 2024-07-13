@@ -62,9 +62,9 @@ class _SemesterScreenState extends State<SemesterScreen> {
         _creditsController.text.contains(',') ||
         _creditsController.text.contains('-') ||
         _creditsController.text.contains(' ') ||
-        int.parse(_creditsController.text) <= 0) {
+        int.parse(_creditsController.text) < 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter a positive integer in the "credits" field')),
+        SnackBar(content: Text('Please enter a non-negative integer in the "credits" field')),
       );
       return;
     }

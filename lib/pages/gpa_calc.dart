@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:nus_orbital_chronos/pages/grade_point_settings.dart';
+import 'package:nus_orbital_chronos/services/grade_points.dart';
 import 'package:nus_orbital_chronos/services/semester.dart';
 import 'package:nus_orbital_chronos/services/course.dart';
 import 'package:nus_orbital_chronos/pages/semester_screen.dart';
@@ -13,12 +15,14 @@ class GPACalc extends StatefulWidget {
 class _GPACalcState extends State<GPACalc> {
   late Box<Semester> semesterBox;
   late Box<Course> courseBox;
+  late Box<GradePoints> gradesBox;
 
   @override
   void initState() {
     super.initState();
     semesterBox = Hive.box<Semester>('Semesters');
     courseBox = Hive.box<Course>('Courses');
+    gradesBox = Hive.box<GradePoints>('GradePoints');
   }
 
   void _addSemester() {
@@ -69,6 +73,18 @@ class _GPACalcState extends State<GPACalc> {
           color: Colors.white,
           onPressed: () { Navigator.pop(context); },
         ),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => GradePointSettings()),
+              );
+            },
+            icon: Icon(Icons.settings),
+            color: Colors.white,
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -84,10 +100,15 @@ class _GPACalcState extends State<GPACalc> {
                       Text('Current GPA', style: TextStyle(fontSize: 24)),
                       ValueListenableBuilder(
                           valueListenable: courseBox.listenable(),
-                          builder: (context, Box<Course> box, _) {
-                            return Text(
-                              '${computeGPA.calculateGPA(courseBox.values.toList()).toStringAsFixed(2)}',
-                              style: TextStyle(fontSize: 24),
+                          builder: (context, a, _) {
+                            return ValueListenableBuilder(
+                              valueListenable: gradesBox.listenable(),
+                              builder: (context, b, _) {
+                                return Text(
+                                  '${computeGPA.calculateGPA(courseBox.values.toList()).toStringAsFixed(2)}',
+                                  style: TextStyle(fontSize: 24),
+                                );
+                              }
                             );
                           }
                       ),

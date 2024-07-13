@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:nus_orbital_chronos/services/grade_points.dart';
 
 part 'course.g.dart';
 
@@ -28,28 +29,29 @@ class Course extends HiveObject {
   });
 
   double get gradePoint {
+    late Box<GradePoints> gradesBox = Hive.box<GradePoints>('GradePoints');
+
     switch (grade) {
       case 'A+':
+        return gradesBox.get('A+')?.points ?? 5.0;
       case 'A':
-        return 5.0;
+        return gradesBox.get('A')?.points ?? 5.0;
       case 'A-':
-        return 4.5;
+        return gradesBox.get('A-')?.points ?? 4.5;
       case 'B+':
-        return 4.0;
+        return gradesBox.get('B+')?.points ?? 4.0;
       case 'B':
-        return 3.5;
+        return gradesBox.get('B')?.points ?? 3.5;
       case 'B-':
-        return 3.0;
+        return gradesBox.get('B-')?.points ?? 3.0;
       case 'C+':
-        return 2.5;
+        return gradesBox.get('C+')?.points ?? 2.5;
       case 'C':
-        return 2.0;
-      case 'C-':
-        return 1.5;
+        return gradesBox.get('C')?.points ?? 2.0;
       case 'D+':
-        return 1.0;
+        return gradesBox.get('D+')?.points ?? 1.5;
       case 'D':
-        return 0.5;
+        return gradesBox.get('D')?.points ?? 1.0;
       case 'F':
       default:
         return 0.0;

@@ -38,6 +38,37 @@ class _SemesterScreenState extends State<SemesterScreen> {
   }
 
   void _addCourse() {
+    var courses = courseBox.values.toList();
+    int count = 0;
+
+    for (Course course in courses) {
+      if (course.sem == widget.sem) {
+        count++;
+      }
+    }
+
+    if (count >= 12) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('You can only add up to 12 courses per semester')),
+      );
+      return;
+    }
+
+    if (_courseNameController.text.isEmpty || _creditsController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please fill in all fields')),
+      );
+    } else if (_creditsController.text.contains('.') ||
+        _creditsController.text.contains(',') ||
+        _creditsController.text.contains('-') ||
+        _creditsController.text.contains(' ') ||
+        int.parse(_creditsController.text) <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter a positive integer in the "credits" field')),
+      );
+      return;
+    }
+
     final String courseName = _courseNameController.text;
     final String grade = selectedGrade;
     final int credits = int.parse(_creditsController.text);
@@ -80,12 +111,12 @@ class _SemesterScreenState extends State<SemesterScreen> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(22.0),
         child: Column(
           children: <Widget>[
             Card(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: <Widget>[
                     TextField(
@@ -111,7 +142,7 @@ class _SemesterScreenState extends State<SemesterScreen> {
                               Text('Grade', style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.6))),
                               SizedBox(width: 10),
                               SizedBox(
-                                width: 50,
+                                width: 64,
                                 child: DropdownButton(
                                   value: selectedGrade,
                                   icon: const Icon(Icons.arrow_drop_down),

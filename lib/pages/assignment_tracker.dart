@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:nus_orbital_chronos/pages/assignment_details.dart';
 import 'package:nus_orbital_chronos/pages/modify_assignment.dart';
 import 'package:nus_orbital_chronos/services/assignment.dart';
 
@@ -44,7 +44,7 @@ class _AssignmentTrackerState extends State<AssignmentTracker> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ModifyAssignment(prefix: 'Add'),
+                      builder: (context) => ModifyAssignment(mode: 'Add', id: -1),
                     ),
                   );
                 },
@@ -55,7 +55,7 @@ class _AssignmentTrackerState extends State<AssignmentTracker> {
                   valueListenable: assignmentsBox.listenable(),
                   builder: (context, Box<Assignment> box, _) {
                     var assignments = box.values.toList();
-                    //assignments.sort((a, b) => a.sem.compareTo(b.sem));  sort based on time
+                    assignments.sort((a, b) => a.due.compareTo(b.due));
                     return ListView.builder(
                       itemCount: assignments.length,
                       itemBuilder: (context, index) {
@@ -67,8 +67,13 @@ class _AssignmentTrackerState extends State<AssignmentTracker> {
                               borderRadius: BorderRadius.circular(15.0),
                             ),
                             child: ListTile(
-                              title: Text(assignment.title),
-                              subtitle: Text('Deadline: ${assignment.due.toString()}'),
+                              title: Text(assignment.title, style: TextStyle(fontWeight: FontWeight.bold),),
+                              subtitle: Text('Deadline: ${DateFormat.yMMMd().format(assignment.due)}  ${assignment.due.hour < 12
+                                  ? '${TimeOfDay(hour: assignment.due.hour, minute: assignment.due.minute).toString().substring(10, 15)} AM'
+                                  : '${assignment.due.hour - 12}:${assignment.due.minute} PM'}',
+                              style: TextStyle(color: assignment.due.subtract(Duration(days: 3)).isBefore(DateTime.now())
+                                  ? Colors.red : Colors.black),
+                              ),
                               trailing: IconButton(
                                 icon: Icon(Icons.delete),
                                 onPressed: () {
@@ -80,7 +85,7 @@ class _AssignmentTrackerState extends State<AssignmentTracker> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => ModifyAssignment(prefix: 'Edit'),
+                                    builder: (context) => ModifyAssignment(mode: 'View', id: assignment.id),
                                   ),
                                 );
                               },

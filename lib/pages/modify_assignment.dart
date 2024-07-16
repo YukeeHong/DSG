@@ -5,8 +5,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nus_orbital_chronos/services/assignment.dart';
 
 class ModifyAssignment extends StatefulWidget {
-  final String? prefix;
-  const ModifyAssignment({super.key, this.prefix});
+  final String mode;
+  final int id;
+  const ModifyAssignment({super.key, required this.mode, required this.id});
 
   @override
   State<ModifyAssignment> createState() => _ModifyAssignmentState();
@@ -16,6 +17,7 @@ class _ModifyAssignmentState extends State<ModifyAssignment> {
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
   bool? isAM;
+  String? mode;
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   late Box<Assignment> assignmentsBox;
@@ -24,6 +26,17 @@ class _ModifyAssignmentState extends State<ModifyAssignment> {
   void initState() {
     super.initState();
     assignmentsBox = Hive.box<Assignment>('Assignments');
+    mode = widget.mode;
+
+    if (mode == 'View') {
+      _titleController.text = assignmentsBox.get(widget.id)!.title.toString();
+      _descriptionController.text = assignmentsBox.get(widget.id)!.description.toString();
+      int hours = assignmentsBox.get(widget.id)!.due.hour;
+      int minutes = assignmentsBox.get(widget.id)!.due.minute;
+      _selectedDate = assignmentsBox.get(widget.id)!.due.subtract(Duration(hours: hours, minutes: minutes));
+      _selectedTime = TimeOfDay(hour: hours, minute: minutes);
+      isAM = (hours < 12);
+    }
   }
 
   void _pickDate() {
@@ -56,16 +69,19 @@ class _ModifyAssignmentState extends State<ModifyAssignment> {
   }
 
   void _saveAssignment() {
-    var assignments = assignmentsBox.values.toList();
-    assignments.sort((a, b) => a.id.compareTo(b.id));
-    int firstEmpty = 1;
-    for (Assignment assignment in assignments) {
-      if (assignment.id == firstEmpty) {
-        firstEmpty++;
-      } else {
-        break;
+    int firstEmpty;
+    if (mode == 'Add') {
+      var assignments = assignmentsBox.values.toList();
+      assignments.sort((a, b) => a.id.compareTo(b.id));
+      firstEmpty = 1;
+      for (Assignment assignment in assignments) {
+        if (assignment.id == firstEmpty) {
+          firstEmpty++;
+        } else {
+          break;
+        }
       }
-    }
+    } else { firstEmpty = widget.id; }
 
     if (_titleController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -88,7 +104,7 @@ class _ModifyAssignmentState extends State<ModifyAssignment> {
     return Scaffold(
       backgroundColor: Colors.indigo[200],
       appBar: AppBar(
-        title: Text('${widget.prefix} Assignment', style: TextStyle(color: Colors.white)),
+        title: Text('${mode} Assignment', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.indigo,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
@@ -109,12 +125,14 @@ class _ModifyAssignmentState extends State<ModifyAssignment> {
                 child: Column(
                   children: <Widget>[
                     TextField(
+                      enabled: (mode != 'View'),
                       controller: _titleController,
                       decoration: InputDecoration(labelText: 'Title *'),
                       maxLength: 30,
                     ),
                     SizedBox(height: 10),
                     TextField(
+                      enabled: (mode != 'View'),
                       controller: _descriptionController,
                       decoration: InputDecoration(
                         labelText: 'Description',
@@ -127,65 +145,87 @@ class _ModifyAssignmentState extends State<ModifyAssignment> {
                       maxLines: 5,
                     ),
                     SizedBox(height: 50),
-                    Text('Deadline', style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.6))),
-                    Container(
-                      height: 50,
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Text(
-                              _selectedDate == null
-                                  ? 'No Date Chosen!'
-                                  : DateFormat.yMMMd().format(_selectedDate!),
+                    if (mode != 'View')
+                      Text('Deadline', style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.6))),
+                    if (mode != 'View')
+                      Container(
+                        height: 50,
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                _selectedDate == null
+                                    ? 'No Date Chosen!'
+                                    : DateFormat.yMMMd().format(_selectedDate!),
+                              ),
                             ),
-                          ),
-                          TextButton(
-                            style: TextButton.styleFrom(
-                              foregroundColor: Theme.of(context).primaryColor,
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                foregroundColor: Theme.of(context).primaryColor,
+                              ),
+                              child: Text(
+                                'Choose Date',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              onPressed: _pickDate,
                             ),
-                            child: Text(
-                              'Choose Date',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            onPressed: _pickDate,
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    Container(
-                      height: 50,
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Text(
-                              _selectedTime == null
-                                  ? 'No Time Chosen!'
-                                  : (isAM!
-                                  ? '${_selectedTime!.toString().substring(10, 15)} AM'
-                                  : '${_selectedTime!.hour - 12}:${_selectedTime!.minute} PM'),
+                    if (mode != 'View')
+                      Container(
+                        height: 50,
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                _selectedTime == null
+                                    ? 'No Time Chosen!'
+                                    : (isAM!
+                                    ? '${_selectedTime!.toString().substring(10, 15)} AM'
+                                    : '${_selectedTime!.hour - 12}:${_selectedTime!.minute} PM'),
+                              ),
                             ),
-                          ),
-                          TextButton(
-                            style: TextButton.styleFrom(
-                              foregroundColor: Theme.of(context).primaryColor,
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                foregroundColor: Theme.of(context).primaryColor,
+                              ),
+                              child: Text(
+                                'Choose Time',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              onPressed: _pickTime,
                             ),
-                            child: Text(
-                              'Choose Time',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            onPressed: _pickTime,
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
+                    if (mode == 'View' && _selectedTime != null && _selectedDate != null && isAM != null)
+                      Container(
+                        height: 50,
+                        child: Row(
+                          children: <Widget>[
+                            Text('Deadline', style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.6))),
+                            SizedBox(width: 20),
+                            Text(DateFormat.yMMMd().format(_selectedDate!)),
+                            SizedBox(width: 10),
+                            Text((isAM!
+                                ? '${_selectedTime!.toString().substring(10, 15)} AM'
+                                : '${_selectedTime!.hour - 12}:${_selectedTime!.minute} PM')),
+                          ],
+                        ),
+                      ),
                   ],
                 ),
               ),
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _saveAssignment,
-              child: Text('Save'),
+              onPressed: () {
+                if (mode == 'View') {
+                  setState(() { mode = 'Edit'; });
+                } else { _saveAssignment(); }
+              },
+              child: Text(mode == 'View' ? 'Edit' : 'Save'),
             ),
           ],
         ),

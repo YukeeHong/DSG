@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:nus_orbital_chronos/services/bill.dart';
 
 class AddBill extends StatefulWidget {
   final Function addBill;
@@ -10,9 +12,17 @@ class AddBill extends StatefulWidget {
 }
 
 class _AddBillState extends State<AddBill> {
+  late Box<Bill> billsBox;
   final _descriptionController = TextEditingController();
   final _amountController = TextEditingController();
   DateTime? _selectedDate;
+  int? id;
+
+  @override
+  void initState() {
+    super.initState();
+    billsBox = Hive.box<Bill>('Bills');
+  }
 
   void _submitData() {
     if (_amountController.text.isEmpty) {
@@ -28,10 +38,24 @@ class _AddBillState extends State<AddBill> {
       return;
     }
 
+    int firstFree = 0;
+    var bills = billsBox.values.toList();
+    bills.sort((a, b) => a.id.compareTo(b.id));
+    for (Bill bill in bills) {
+      if (bill.id == firstFree) {
+        firstFree++;
+      } else {
+        break;
+      }
+    }
+
+    id = firstFree;
+
     widget.addBill(
       enteredDescription,
       enteredAmount,
       _selectedDate!,
+      id,
     );
 
     Navigator.of(context).pop();

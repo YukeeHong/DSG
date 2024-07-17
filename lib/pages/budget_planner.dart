@@ -18,12 +18,13 @@ class _BudgetPlannerState extends State<BudgetPlanner> {
     billsBox = Hive.box<Bill>('Bills');
   }
 
-  void _addBill(String description, double amount, DateTime date) {
+  void _addBill(String description, double amount, DateTime date, int id) {
     setState(() {
-      billsBox.add(Bill(
+      billsBox.put(id, Bill(
         description: description,
         amount: amount,
         date: date,
+        id: id,
       ));
     });
   }

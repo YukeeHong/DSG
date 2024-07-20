@@ -69,8 +69,8 @@ class _AssignmentTrackerState extends State<AssignmentTracker> {
                             child: ListTile(
                               title: Text(assignment.title, style: TextStyle(fontWeight: FontWeight.bold),),
                               subtitle: Text('Deadline: ${DateFormat.yMMMd().format(assignment.due)}  ${assignment.due.hour < 12
-                                  ? '${TimeOfDay(hour: assignment.due.hour, minute: assignment.due.minute).toString().substring(10, 15)} AM'
-                                  : '${assignment.due.hour - 12}:${assignment.due.minute} PM'}',
+                                  ? '${assignment.due.hour}:${assignment.due.minute.toString().padLeft(2, '0')} AM'
+                                  : '${assignment.due.hour - 12}:${assignment.due.minute.toString().padLeft(2, '0')} PM'}',
                               style: TextStyle(color: assignment.due.subtract(Duration(days: 3)).isBefore(DateTime.now())
                                   ? Colors.red : Colors.black),
                               ),

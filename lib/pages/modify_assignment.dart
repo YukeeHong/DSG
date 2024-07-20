@@ -182,8 +182,8 @@ class _ModifyAssignmentState extends State<ModifyAssignment> {
                                 _selectedTime == null
                                     ? 'No Time Chosen!'
                                     : (isAM!
-                                    ? '${_selectedTime!.toString().substring(10, 15)} AM'
-                                    : '${_selectedTime!.hour - 12}:${_selectedTime!.minute} PM'),
+                                    ? '${_selectedTime!.hour}:${_selectedTime!.minute.toString().padLeft(2, '0')} AM'
+                                    : '${_selectedTime!.hour - 12}:${_selectedTime!.minute.toString().padLeft(2, '0')} PM'),
                               ),
                             ),
                             TextButton(
@@ -209,8 +209,8 @@ class _ModifyAssignmentState extends State<ModifyAssignment> {
                             Text(DateFormat.yMMMd().format(_selectedDate!)),
                             SizedBox(width: 10),
                             Text((isAM!
-                                ? '${_selectedTime!.toString().substring(10, 15)} AM'
-                                : '${_selectedTime!.hour - 12}:${_selectedTime!.minute} PM')),
+                                ? '${_selectedTime!.hour}:${_selectedTime!.minute.toString().padLeft(2, '0')} AM'
+                                : '${_selectedTime!.hour - 12}:${_selectedTime!.minute.toString().padLeft(2, '0')} PM')),
                           ],
                         ),
                       ),

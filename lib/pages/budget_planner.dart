@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nus_orbital_chronos/services/bill.dart';
-import 'package:nus_orbital_chronos/services/add_bill.dart';
+import 'package:nus_orbital_chronos/pages/add_bill.dart';
 
 class BudgetPlanner extends StatefulWidget {
   @override

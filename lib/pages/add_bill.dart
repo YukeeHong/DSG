@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'bill.dart';
+import '../services/bill.dart';
 
 class AddBill extends StatefulWidget {
   final int id;

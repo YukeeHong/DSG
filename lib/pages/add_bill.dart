@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../services/bill.dart';
+import 'package:nus_orbital_chronos/pages/category_picker.dart';
+import 'package:nus_orbital_chronos/services/bill.dart';
+import 'package:nus_orbital_chronos/services/category.dart';
 
 class AddBill extends StatefulWidget {
   final int id;
@@ -13,14 +15,17 @@ class AddBill extends StatefulWidget {
 
 class _AddBillState extends State<AddBill> {
   late Box<Bill> billsBox;
+  late Box<Category> expCatBox;
   final _descriptionController = TextEditingController();
   final _amountController = TextEditingController();
   DateTime? _selectedDate;
+  Category? _selectedCategory;
 
   @override
   void initState() {
     super.initState();
     billsBox = Hive.box<Bill>('Bills');
+    expCatBox = Hive.box<Category>('Expense Categories');
     if (widget.id != -1) {
       Bill bill = billsBox.get(widget.id)!;
       _descriptionController.text = bill.description;
@@ -139,6 +144,37 @@ class _AddBillState extends State<AddBill> {
                     onPressed: () {
                       DateTime date = _selectedDate ?? DateTime.now();
                       _presentDatePicker(date);
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              height: 70,
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      _selectedCategory == null
+                          ? 'No Category Selected!'
+                          : 'Selected Category: ${_selectedCategory!.title}',
+                    ),
+                  ),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: Theme.of(context).primaryColor,
+                    ),
+                    child: Text(
+                      'Select Category',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: () async {
+                      _selectedCategory = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CategoryPicker(),
+                        ),
+                      );
                     },
                   ),
                 ],

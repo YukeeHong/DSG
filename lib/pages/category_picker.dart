@@ -22,8 +22,9 @@ class _CategoryPickerState extends State<CategoryPicker> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.indigo[200],
       appBar: AppBar(
-        title: Text('Budget Planner', style: TextStyle(color: Colors.white)),
+        title: Text('Select Category', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.indigo,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
@@ -42,7 +43,7 @@ class _CategoryPickerState extends State<CategoryPicker> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ModifyCategory(mode: 0, id: ''),
+                      builder: (context) => ModifyCategory(modeAdd: true, id: -1),
                     ),
                   );
                 },
@@ -71,7 +72,7 @@ class _CategoryPickerState extends State<CategoryPicker> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => ModifyCategory(mode: 1, id: 'expense_${cat.title}'),
+                                        builder: (context) => ModifyCategory(modeAdd: false, id: cat.id),
                                       ),
                                     );
                                   },

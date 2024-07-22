@@ -73,7 +73,7 @@ class _BudgetPlannerState extends State<BudgetPlanner> {
                     itemBuilder: (ctx, i) {
                       return Column(
                         children: <Widget>[
-                          Text(DateFormat.yMMMd().format(bills[i].date)),
+                          //Text(DateFormat.yMMMd().format(bills[i].date)),
                           ListView.builder(
                               itemBuilder: (ctx, index) {
                               return Card(

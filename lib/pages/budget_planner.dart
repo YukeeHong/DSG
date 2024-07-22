@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nus_orbital_chronos/services/bill.dart';
 import 'package:nus_orbital_chronos/pages/add_bill.dart';
+import 'package:nus_orbital_chronos/services/category.dart';
 
 class BudgetPlanner extends StatefulWidget {
   @override
@@ -50,6 +51,7 @@ class _BudgetPlannerState extends State<BudgetPlanner> {
         valueListenable: billsBox.listenable(),
         builder: (context, Box<Bill> billsBox, _) {
           final bills = billsBox.values.toList();
+          bills.sort((b, a) => a.date.compareTo(b.date));
           final totalAmount = billsBox.values.fold<double>(0.0, (double sum, Bill bill) => sum + bill.amount);
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -65,27 +67,53 @@ class _BudgetPlannerState extends State<BudgetPlanner> {
                 ),
               ),
               Expanded(
-                child: ListView.builder(
-                  itemCount: bills.length,
-                  itemBuilder: (ctx, index) {
-                    return Card(
-                      child: ListTile(
-                        title: Text(bills[index].description),
-                        subtitle: Text(
-                          '\$${bills[index].amount.toStringAsFixed(2)} - ${bills[index].date.toString()}',
-                        ),
-                        trailing: IconButton(
-                          icon: Icon(Icons.delete),
-                          onPressed: () {
-                            billsBox.delete(bills[index].id);
-                          },
-                        ),
-                        onTap: () {
-                          _startAddNewBill(context, bills[index].id);
-                        },
-                      ),
-                    );
-                  },
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ListView.builder(
+                    itemBuilder: (ctx, i) {
+                      return Column(
+                        children: <Widget>[
+                          Text(DateFormat.yMMMd().format(bills[i].date)),
+                          ListView.builder(
+                              itemBuilder: (ctx, index) {
+                              return Card(
+                                color: bills[index].category.color.withOpacity(0.7),
+                                child: ListTile(
+                                  title: Text(
+                                    bills[index].description,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: bills[index].category.color == Colors.white ? Colors.black : Colors.white,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    '\$${bills[index].amount.toStringAsFixed(2)} - ${bills[index].category.title} - ${bills[index].date.toString()}',
+                                    style: TextStyle(
+                                      color: bills[index].category.color == Colors.white ? Colors.black : Colors.white,
+                                    ),
+                                  ),
+                                  trailing: IconButton(
+                                    icon: Icon(
+                                        Icons.delete,
+                                        color: bills[index].category.color == Colors.white
+                                            ? kDefaultIconLightColor
+                                            : Colors.white
+                                    ),
+                                    onPressed: () {
+                                      billsBox.delete(bills[index].id);
+                                    },
+                                  ),
+                                  onTap: () {
+                                    _startAddNewBill(context, bills[index].id);
+                                  },
+                                ),
+                              );
+                            }
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ),
             ],

@@ -54,36 +54,48 @@ class _CategoryPickerState extends State<CategoryPicker> {
                   valueListenable: expCatBox.listenable(),
                   builder: (context, Box<Category> box, _) {
                     var cats = box.values.toList();
-                    return ListView.builder(
-                        itemCount: cats.length,
-                        itemBuilder: (context, index) {
-                          final cat = cats[index];
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 4.0),
-                            child: Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15.0),
-                              ),
-                              child: ListTile(
-                                title: Text(cat.title, style: TextStyle(fontWeight: FontWeight.bold),),
-                                trailing: IconButton(
-                                  icon: Icon(Icons.settings),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ModifyCategory(modeAdd: false, id: cat.id),
+                    return Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListView.builder(
+                            itemCount: cats.length,
+                            itemBuilder: (context, index) {
+                              final cat = cats[index];
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 4.0),
+                                child: Card(
+                                  color: cat.color.withOpacity(0.7),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
+                                  child: ListTile(
+                                    title: Text(
+                                      cat.title,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: cat.color == Colors.white ? Colors.black : Colors.white,
                                       ),
-                                    );
-                                  },
+                                    ),
+                                    trailing: IconButton(
+                                      icon: Icon(Icons.settings),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => ModifyCategory(modeAdd: false, id: cat.id),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    onTap: () {
+                                      Navigator.pop(context, cat.id);
+                                    },
+                                  ),
                                 ),
-                                onTap: () {
-                                  Navigator.pop(context, 'expense_${cat.title}');
-                                },
-                              ),
-                            ),
-                          );
-                        }
+                              );
+                            }
+                        ),
+                      ),
                     );
                   },
                 ),

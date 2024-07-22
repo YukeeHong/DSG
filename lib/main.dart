@@ -26,6 +26,7 @@ import 'package:nus_orbital_chronos/services/course.dart';
 import 'package:nus_orbital_chronos/services/grade_points.dart';
 import 'package:nus_orbital_chronos/services/assignment.dart';
 import 'package:nus_orbital_chronos/services/category.dart';
+import 'package:nus_orbital_chronos/services/color_adapter.dart';
 
 void main() async {
   // Ensure that Flutter binding is initialized
@@ -35,13 +36,14 @@ void main() async {
   await Hive.initFlutter();
 
   // Register Hive Adapters
-  Hive.registerAdapter(BillAdapter());
-  Hive.registerAdapter(EventAdapter());
-  Hive.registerAdapter(SemesterAdapter());
-  Hive.registerAdapter(CourseAdapter());
-  Hive.registerAdapter(GradePointsAdapter());
-  Hive.registerAdapter(AssignmentAdapter());
-  Hive.registerAdapter(CategoryAdapter());
+  Hive.registerAdapter(BillAdapter()); // TypeId: 0
+  Hive.registerAdapter(EventAdapter()); // TypeId: 1
+  Hive.registerAdapter(SemesterAdapter()); // TypeId: 2
+  Hive.registerAdapter(CourseAdapter()); // TypeId: 3
+  Hive.registerAdapter(GradePointsAdapter()); // TypeId: 4
+  Hive.registerAdapter(AssignmentAdapter()); // TypeId: 5
+  Hive.registerAdapter(CategoryAdapter()); // TypeId: 6
+  Hive.registerAdapter(ColorAdapter()); // TypeId: 7
 
   // Open Hive boxes
   await Hive.openBox<Bill>('Bills'); // TypeId: 0

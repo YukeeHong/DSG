@@ -31,16 +31,18 @@ class _AddBillState extends State<AddBill> {
       _descriptionController.text = bill.description;
       _amountController.text = bill.amount.toString();
       _selectedDate = bill.date;
+      _selectedCategory = bill.category;
     }
   }
 
-  void addBill(String description, double amount, DateTime date, int id) {
+  void addBill(String description, double amount, DateTime date, int id, Category category) {
     setState(() {
       billsBox.put(id, Bill(
         description: description,
         amount: amount,
         date: date,
         id: id,
+        category: category,
       ));
     });
   }
@@ -79,6 +81,7 @@ class _AddBillState extends State<AddBill> {
       enteredAmount,
       _selectedDate!,
       id,
+      _selectedCategory!
     );
 
     _descriptionController.clear();
@@ -169,12 +172,14 @@ class _AddBillState extends State<AddBill> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     onPressed: () async {
-                      _selectedCategory = await Navigator.push(
+                      int id = await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => CategoryPicker(),
                         ),
                       );
+                      _selectedCategory = expCatBox.get(id);
+                      setState(() {});
                     },
                   ),
                 ],

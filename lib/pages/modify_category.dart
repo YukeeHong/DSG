@@ -28,7 +28,7 @@ class _ModifyCategoryState extends State<ModifyCategory> {
     }
   }
 
-  void setColor() {
+  void _saveCategory() {
     int id = widget.id;
     if (id == -1) {
       int firstFree = 0;
@@ -54,56 +54,6 @@ class _ModifyCategoryState extends State<ModifyCategory> {
     Navigator.pop(context);
   }
 
-  Future<bool> colorPickerDialog() async {
-    return ColorPicker(
-      color: _selectedColor ?? Color(0xFF0000),
-      onColorChanged: (Color color) =>
-          setState(() => _selectedColor = color),
-      width: 40,
-      height: 40,
-      borderRadius: 4,
-      spacing: 5,
-      runSpacing: 5,
-      wheelDiameter: 155,
-      heading: Text(
-        'Select color',
-        style: Theme.of(context).textTheme.titleMedium,
-      ),
-      subheading: Text(
-        'Select color shade',
-        style: Theme.of(context).textTheme.titleMedium,
-      ),
-      wheelSubheading: Text(
-        'Selected color and its shades',
-        style: Theme.of(context).textTheme.titleMedium,
-      ),
-      showMaterialName: true,
-      showColorName: true,
-      showColorCode: true,
-      copyPasteBehavior: const ColorPickerCopyPasteBehavior(
-        longPressMenu: true,
-      ),
-      materialNameTextStyle: Theme.of(context).textTheme.bodySmall,
-      colorNameTextStyle: Theme.of(context).textTheme.bodySmall,
-      colorCodeTextStyle: Theme.of(context).textTheme.bodyMedium,
-      colorCodePrefixStyle: Theme.of(context).textTheme.bodySmall,
-      selectedPickerTypeColor: Theme.of(context).colorScheme.primary,
-      pickersEnabled: const <ColorPickerType, bool>{
-        ColorPickerType.both: false,
-        ColorPickerType.primary: true,
-        ColorPickerType.accent: true,
-        ColorPickerType.bw: false,
-        ColorPickerType.custom: true,
-        ColorPickerType.wheel: true,
-      },
-    ).showPickerDialog(
-      context,
-      actionsPadding: const EdgeInsets.all(16),
-      constraints:
-      const BoxConstraints(minHeight: 480, minWidth: 300, maxWidth: 320),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -119,74 +69,73 @@ class _ModifyCategoryState extends State<ModifyCategory> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Container(
-          width: double.infinity,
-          child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(22.0),
-              child: Column(
-                children: <Widget>[
-                  TextField(
-                    controller: _titleController,
-                    decoration: InputDecoration(labelText: 'Title'),
-                    maxLength: 15,
-                  ),
-                  // TO-DO: Color picker for category
-                  Container(
-                    height: 70,
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Text(
-                            _selectedColor == null
-                                ? 'No Color Selected!'
-                                : 'Selected Color',
-                            style: TextStyle(color: Colors.black.withOpacity(0.6)),
-                          ),
-                        ),
-                        (_selectedColor == null)
-                            ? TextButton(
-                              style: TextButton.styleFrom(
-                              foregroundColor: Theme.of(context).primaryColor,
-                            ),
-                              child: Text(
-                                'Select Category',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              onPressed: () async {
-                                final Color colorBeforeDialog = _selectedColor!;
-                                if (!(await colorPickerDialog())) {
-                                  setState(() {
-                                    _selectedColor = colorBeforeDialog;
-                                  });
-                                }
-                              },
-                            )
-                            : ColorIndicator(
-                              width: 44,
-                              height: 44,
-                              borderRadius: 4,
-                              color: _selectedColor!,
-                              onSelectFocus: false,
-                              onSelect: () async {
-                                final Color colorBeforeDialog = _selectedColor!;
-                                if (!(await colorPickerDialog())) {
-                                  setState(() {
-                                    _selectedColor = colorBeforeDialog;
-                                  });
-                                }
-                              },
-                            ),
-                      ],
+        child: Column(
+          children: <Widget>[
+            Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(22.0),
+                child: Column(
+                  children: <Widget>[
+                    TextField(
+                      controller: _titleController,
+                      decoration: InputDecoration(labelText: 'Title'),
+                      maxLength: 15,
                     ),
-                  ),
-                ],
+                    Container(
+
+                      child: ColorPicker(
+                        color: _selectedColor ?? Color(0xFF0000),
+                        onColorChanged: (Color color) =>
+                            setState(() => _selectedColor = color),
+                        width: 40,
+                        height: 40,
+                        borderRadius: 4,
+                        spacing: 5,
+                        runSpacing: 5,
+                        wheelDiameter: 155,
+                        heading: Text(
+                          'Select color',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        subheading: Text(
+                          'Select color shade',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        wheelSubheading: Text(
+                          'Selected color and its shades',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        showMaterialName: true,
+                        showColorName: false,
+                        showColorCode: false,
+                        materialNameTextStyle: Theme.of(context).textTheme.bodySmall,
+                        colorNameTextStyle: Theme.of(context).textTheme.bodySmall,
+                        colorCodeTextStyle: Theme.of(context).textTheme.bodyMedium,
+                        colorCodePrefixStyle: Theme.of(context).textTheme.bodySmall,
+                        selectedPickerTypeColor: Theme.of(context).colorScheme.primary,
+                        pickersEnabled: const <ColorPickerType, bool>{
+                          ColorPickerType.both: false,
+                          ColorPickerType.primary: true,
+                          ColorPickerType.accent: true,
+                          ColorPickerType.bw: false,
+                          ColorPickerType.custom: true,
+                          ColorPickerType.wheel: true,
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _saveCategory,
+              child: Text('Save'),
+            ),
+          ],
         ),
       ),
     );

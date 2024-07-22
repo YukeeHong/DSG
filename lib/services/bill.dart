@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:nus_orbital_chronos/services/category.dart';
 
 part 'bill.g.dart';
 
@@ -16,10 +17,14 @@ class Bill {
   @HiveField(3)
   final int id;
 
+  @HiveField(4)
+  final Category category;
+
   Bill({
     required this.description,
     required this.amount,
     required this.date,
     required this.id,
+    required this.category,
   });
 }

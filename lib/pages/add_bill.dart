@@ -20,6 +20,8 @@ class _AddBillState extends State<AddBill> {
   final _amountController = TextEditingController();
   DateTime? _selectedDate;
   Category? _selectedCategory;
+  TimeOfDay? _selectedTime;
+  bool? isAM;
 
   @override
   void initState() {
@@ -32,10 +34,11 @@ class _AddBillState extends State<AddBill> {
       _amountController.text = bill.amount.toString();
       _selectedDate = bill.date;
       _selectedCategory = bill.category;
+      _selectedTime = bill.time;
     }
   }
 
-  void addBill(String description, double amount, DateTime date, int id, Category category) {
+  void addBill(String description, double amount, DateTime date, int id, Category category, TimeOfDay time) {
     setState(() {
       billsBox.put(id, Bill(
         description: description,
@@ -43,6 +46,7 @@ class _AddBillState extends State<AddBill> {
         date: date,
         id: id,
         category: category,
+        time: time,
       ));
     });
   }
@@ -81,7 +85,8 @@ class _AddBillState extends State<AddBill> {
       enteredAmount,
       _selectedDate!,
       id,
-      _selectedCategory!
+      _selectedCategory!,
+      _selectedTime!,
     );
 
     _descriptionController.clear();
@@ -107,6 +112,19 @@ class _AddBillState extends State<AddBill> {
     });
   }
 
+  Future<void> _pickTime() async {
+    TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: _selectedTime == null ? TimeOfDay.now() : _selectedTime!,
+    );
+
+    if (pickedTime != null) {
+      _selectedTime = pickedTime;
+      _selectedTime!.hour < 12 ? isAM = true : isAM = false;
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -125,8 +143,9 @@ class _AddBillState extends State<AddBill> {
               decoration: InputDecoration(labelText: 'Amount'),
               keyboardType: TextInputType.number,
             ),
+            SizedBox(height: 10),
             Container(
-              height: 70,
+              height: 50,
               child: Row(
                 children: <Widget>[
                   Expanded(
@@ -153,7 +172,7 @@ class _AddBillState extends State<AddBill> {
               ),
             ),
             Container(
-              height: 70,
+              height: 50,
               child: Row(
                 children: <Widget>[
                   Expanded(
@@ -181,6 +200,32 @@ class _AddBillState extends State<AddBill> {
                       _selectedCategory = expCatBox.get(id);
                       setState(() {});
                     },
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              height: 50,
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      _selectedTime == null
+                          ? 'No Time Chosen!'
+                          : (isAM!
+                          ? '${_selectedTime!.hour}:${_selectedTime!.minute.toString().padLeft(2, '0')} AM'
+                          : '${_selectedTime!.hour - 12}:${_selectedTime!.minute.toString().padLeft(2, '0')} PM'),
+                    ),
+                  ),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: Theme.of(context).primaryColor,
+                    ),
+                    child: Text(
+                      'Choose Time',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: _pickTime,
                   ),
                 ],
               ),

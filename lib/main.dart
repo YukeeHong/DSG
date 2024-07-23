@@ -46,6 +46,7 @@ void main() async {
   Hive.registerAdapter(CategoryAdapter()); // TypeId: 6
   Hive.registerAdapter(ColorAdapter()); // TypeId: 7
   Hive.registerAdapter(TimeOfDayAdapter()); // TypeId: 8
+  //Hive.registerAdapter(QuoteAdapter()); // TypeId: 9
 
   // Open Hive boxes
   await Hive.openBox<Bill>('Bills');
@@ -55,6 +56,7 @@ void main() async {
   await Hive.openBox<GradePoints>('GradePoints');
   await Hive.openBox<Assignment>('Assignments');
   await Hive.openBox<Category>('Expense Categories');
+  //await Hive.openBox<Quote>('Quotes');
 
   runApp(ChangeNotifierProvider(
     create: (context) => EventProvider(),

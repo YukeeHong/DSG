@@ -1,15 +1,20 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:nus_orbital_chronos/services/quote.dart';
 
 class QuoteService {
-  final String _apiUrl = 'https://api.quotable.io/random';
+  static const String apiUrl = 'https://api.quotable.io/random';
 
-  Future<String> fetchQuote() async {
-    final response = await http.get(Uri.parse(_apiUrl));
+  static Future<Quote> fetchQuote() async {
+    final response = await http.get(Uri.parse(apiUrl));
 
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return data['content'];
+      final data = json.decode(response.body);
+      final quote = Quote(
+        text: data['content'],
+        date: DateTime.now(),
+      );
+      return quote;
     } else {
       throw Exception('Failed to load quote');
     }

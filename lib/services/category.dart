@@ -11,6 +11,10 @@ class Category extends HiveObject {
   @HiveField(1)
   final Color color;
 
+  /** Type Bill:
+   *  -1: Monthly goal
+   *  -2: Income
+   */
   @HiveField(2)
   final int id;
 

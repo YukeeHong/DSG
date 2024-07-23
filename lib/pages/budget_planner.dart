@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:nus_orbital_chronos/pages/budget_tracker_stats.dart';
 import 'package:nus_orbital_chronos/services/bill.dart';
 import 'package:nus_orbital_chronos/pages/add_bill.dart';
 
@@ -11,11 +12,13 @@ class BudgetPlanner extends StatefulWidget {
 
 class _BudgetPlannerState extends State<BudgetPlanner> {
   late Box<Bill> billsBox;
+  bool? goalIsEmpty;
 
   @override
   void initState() {
     super.initState();
     billsBox = Hive.box<Bill>('Bills');
+    goalIsEmpty = (billsBox.get('monthly_expense_holder') == null);
   }
 
   void _startAddNewBill(BuildContext context, int id) {
@@ -65,67 +68,92 @@ class _BudgetPlannerState extends State<BudgetPlanner> {
       body: ValueListenableBuilder(
         valueListenable: billsBox.listenable(),
         builder: (context, Box<Bill> billsBox, _) {
-          final bills = billsBox.values.toList();
+          final bills = billsBox.values.where((bill) => bill.id != -1).toList();
           bills.sort((b, a) => a.date.compareTo(b.date));
           final totalAmount = billsBox.values.fold<double>(
-              0.0, (double sum, Bill bill) => sum + bill.amount);
+              0.0, (double sum, Bill bill) {
+                if (bill.category.id != -2 && bill.id != -1
+                    && bill.date.year == DateTime.now().year && bill.date.month == DateTime.now().month) {
+                  return sum + bill.amount;
+                } else {
+                  return sum;
+                }
+              });
           final groupedBills = groupBillsByDate(bills);
 
           return Column(
             children: <Widget>[
-              Container(
-                width: double.infinity,
-                child: Card(
-                  color: Theme.of(context).primaryColor,
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        Column(
-                          children: <Widget>[
-                            Container(
-                              width: 130,
-                              child: Text(
-                                'This Month:',
-                                style: TextStyle(fontSize: 20, color: Colors.white),
-                              ),
-                            ),
-                            Text(
-                              '\$${totalAmount.toStringAsFixed(2)}     ',
-                              style: TextStyle(fontSize: 20, color: Colors.white),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          width: 100,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BudgetTrackerStats(expense: totalAmount),
+                    ),
+                  );
+                },
+                child: Container(
+                  width: double.infinity,
+                  child: Card(
+                    color: Theme.of(context).primaryColor,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: Column(
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              SizedBox(height: 70),
-                              Text(
-                                'Press for more',
-                                style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.5)),
+                              Container(
+                                child: Column(
+                                  children: <Widget>[
+                                    Text(
+                                      '',
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                    Text(
+                                      'Monthly Expenses:',
+                                      style: TextStyle(fontSize: 20, color: Colors.white),
+                                    ),
+                                    Text(
+                                      '\$${totalAmount.toStringAsFixed(2)}',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color: !goalIsEmpty! && billsBox.get('monthly_expense_holder')!.amount < totalAmount
+                                          ? Colors.red[600]
+                                          : Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                child: Column(
+                                  children: <Widget>[
+                                    Text(
+                                      '',
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                    Text(
+                                      'Monthly Goal:',
+                                      style: TextStyle(fontSize: 20, color: Colors.white),
+                                    ),
+                                    Text(
+                                      goalIsEmpty!
+                                      ? 'N/A'
+                                      : '\$${billsBox.get('monthly_expense_holder')!.amount.toStringAsFixed(2)}',
+                                      style: TextStyle(fontSize: 20, color: Colors.white),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
-                        ),
-                        Container(
-                          width: 130,
-                          child: Column(
-                            children: <Widget>[
-                              Text(
-                                'Monthly Goal:',
-                                style: TextStyle(fontSize: 20, color: Colors.white),
-                              ),
-                              Text(
-                                '\$${totalAmount.toStringAsFixed(2)}',
-                                style: TextStyle(fontSize: 20, color: Colors.white),
-                              ),
-                            ],
+                          Text(
+                            'Press for more',
+                            style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.5)),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -172,7 +200,7 @@ class _BudgetPlannerState extends State<BudgetPlanner> {
                                               billsOnDate[i].time.hour > 12
                                               ? billsOnDate[i].time.hour - 12
                                               : billsOnDate[i].time.hour
-                                          }:${billsOnDate[i].time.minute} ${
+                                          }:${billsOnDate[i].time.minute.toString().padLeft(2, '0')} ${
                                               billsOnDate[i].time.hour > 12
                                               ? 'PM'
                                               : 'AM'

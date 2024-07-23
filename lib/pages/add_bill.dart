@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'bill.dart';
+import 'package:nus_orbital_chronos/pages/category_picker.dart';
+import 'package:nus_orbital_chronos/services/bill.dart';
+import 'package:nus_orbital_chronos/services/category.dart';
 
 class AddBill extends StatefulWidget {
   final int id;
@@ -13,29 +16,39 @@ class AddBill extends StatefulWidget {
 
 class _AddBillState extends State<AddBill> {
   late Box<Bill> billsBox;
+  late Box<Category> expCatBox;
   final _descriptionController = TextEditingController();
   final _amountController = TextEditingController();
   DateTime? _selectedDate;
+  Category? _selectedCategory;
+  TimeOfDay? _selectedTime;
+  bool? isAM;
 
   @override
   void initState() {
     super.initState();
     billsBox = Hive.box<Bill>('Bills');
+    expCatBox = Hive.box<Category>('Expense Categories');
     if (widget.id != -1) {
       Bill bill = billsBox.get(widget.id)!;
       _descriptionController.text = bill.description;
       _amountController.text = bill.amount.toString();
       _selectedDate = bill.date;
+      _selectedCategory = bill.category;
+      _selectedTime = bill.time;
+      _selectedTime!.hour < 12 ? isAM = true : isAM = false;
     }
   }
 
-  void addBill(String description, double amount, DateTime date, int id) {
+  void addBill(String description, double amount, DateTime date, int id, Category category, TimeOfDay time) {
     setState(() {
       billsBox.put(id, Bill(
         description: description,
         amount: amount,
         date: date,
         id: id,
+        category: category,
+        time: time,
       ));
     });
   }
@@ -74,6 +87,8 @@ class _AddBillState extends State<AddBill> {
       enteredAmount,
       _selectedDate!,
       id,
+      _selectedCategory!,
+      _selectedTime!,
     );
 
     _descriptionController.clear();
@@ -99,6 +114,19 @@ class _AddBillState extends State<AddBill> {
     });
   }
 
+  Future<void> _pickTime() async {
+    TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: _selectedTime == null ? TimeOfDay.now() : _selectedTime!,
+    );
+
+    if (pickedTime != null) {
+      _selectedTime = pickedTime;
+      _selectedTime!.hour < 12 ? isAM = true : isAM = false;
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -117,15 +145,16 @@ class _AddBillState extends State<AddBill> {
               decoration: InputDecoration(labelText: 'Amount'),
               keyboardType: TextInputType.number,
             ),
+            SizedBox(height: 10),
             Container(
-              height: 70,
+              height: 50,
               child: Row(
                 children: <Widget>[
                   Expanded(
                     child: Text(
                       _selectedDate == null
                           ? 'No Date Chosen!'
-                          : 'Picked Date: ${_selectedDate.toString()}',
+                          : 'Selected Date: ${DateFormat.yMMMd().format(_selectedDate!)}',
                     ),
                   ),
                   TextButton(
@@ -133,13 +162,72 @@ class _AddBillState extends State<AddBill> {
                       foregroundColor: Theme.of(context).primaryColor,
                     ),
                     child: Text(
-                      'Choose Date',
+                      'Select Date',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     onPressed: () {
                       DateTime date = _selectedDate ?? DateTime.now();
                       _presentDatePicker(date);
                     },
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              height: 50,
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      _selectedCategory == null
+                          ? 'No Category Selected!'
+                          : 'Selected Category: ${_selectedCategory!.title}',
+                    ),
+                  ),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: Theme.of(context).primaryColor,
+                    ),
+                    child: Text(
+                      'Select Category',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: () async {
+                      int id = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CategoryPicker(),
+                        ),
+                      );
+                      _selectedCategory = expCatBox.get(id);
+                      setState(() {});
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              height: 50,
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      _selectedTime == null
+                          ? 'No Time Chosen!'
+                          : (isAM!
+                          ? '${_selectedTime!.hour}:${_selectedTime!.minute.toString().padLeft(2, '0')} AM'
+                          : '${_selectedTime!.hour - 12}:${_selectedTime!.minute.toString().padLeft(2, '0')} PM'),
+                    ),
+                  ),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: Theme.of(context).primaryColor,
+                    ),
+                    child: Text(
+                      'Choose Time',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: _pickTime,
                   ),
                 ],
               ),

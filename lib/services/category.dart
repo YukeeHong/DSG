@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:flutter/material.dart';
 
 part 'category.g.dart';
 
@@ -7,7 +8,15 @@ class Category extends HiveObject {
   @HiveField(0)
   final String title;
 
+  @HiveField(1)
+  final Color color;
+
+  @HiveField(2)
+  final int id;
+
   Category({
     required this.title,
+    required this.color,
+    required this.id,
   });
 }

@@ -35,6 +35,7 @@ class _AddBillState extends State<AddBill> {
       _selectedDate = bill.date;
       _selectedCategory = bill.category;
       _selectedTime = bill.time;
+      _selectedTime!.hour < 12 ? isAM = true : isAM = false;
     }
   }
 

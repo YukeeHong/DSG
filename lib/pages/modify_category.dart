@@ -131,9 +131,24 @@ class _ModifyCategoryState extends State<ModifyCategory> {
               ),
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _saveCategory,
-              child: Text('Save'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                ElevatedButton(
+                  onPressed: _saveCategory,
+                  child: Text('Save'),
+                ),
+                if(widget.id != -1)
+                  SizedBox(width: 30),
+                if(widget.id != -1)
+                  ElevatedButton(
+                    onPressed: () {
+                      expCatBox.delete(widget.id);
+                      Navigator.pop(context);
+                    },
+                    child: Text('Delete'),
+                  ),
+              ],
             ),
           ],
         ),

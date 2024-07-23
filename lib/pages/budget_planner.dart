@@ -79,9 +79,44 @@ class _BudgetPlannerState extends State<BudgetPlanner> {
                   color: Theme.of(context).primaryColor,
                   child: Container(
                     padding: EdgeInsets.all(10),
-                    child: Text(
-                      'Total Amount: \$${totalAmount.toStringAsFixed(2)}',
-                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Column(
+                          children: <Widget>[
+                            Text(
+                              'This Month:',
+                              style: TextStyle(fontSize: 20, color: Colors.white),
+                            ),
+                            Text(
+                              '\$${totalAmount.toStringAsFixed(2)}',
+                              style: TextStyle(fontSize: 20, color: Colors.white),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            SizedBox(height: 70),
+                            Text(
+                              'Press for more',
+                              style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.5)),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: <Widget>[
+                            Text(
+                              'Goal:',
+                              style: TextStyle(fontSize: 20, color: Colors.white),
+                            ),
+                            Text(
+                              '\$${totalAmount.toStringAsFixed(2)}',
+                              style: TextStyle(fontSize: 20, color: Colors.white),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),

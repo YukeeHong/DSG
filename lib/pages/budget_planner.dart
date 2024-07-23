@@ -84,37 +84,46 @@ class _BudgetPlannerState extends State<BudgetPlanner> {
                       children: <Widget>[
                         Column(
                           children: <Widget>[
-                            Text(
-                              'This Month:',
-                              style: TextStyle(fontSize: 20, color: Colors.white),
+                            Container(
+                              width: 130,
+                              child: Text(
+                                'This Month:',
+                                style: TextStyle(fontSize: 20, color: Colors.white),
+                              ),
                             ),
                             Text(
-                              '\$${totalAmount.toStringAsFixed(2)}',
+                              '\$${totalAmount.toStringAsFixed(2)}     ',
                               style: TextStyle(fontSize: 20, color: Colors.white),
                             ),
                           ],
                         ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            SizedBox(height: 70),
-                            Text(
-                              'Press for more',
-                              style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.5)),
-                            ),
-                          ],
+                        Container(
+                          width: 100,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              SizedBox(height: 70),
+                              Text(
+                                'Press for more',
+                                style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.5)),
+                              ),
+                            ],
+                          ),
                         ),
-                        Column(
-                          children: <Widget>[
-                            Text(
-                              'Goal:',
-                              style: TextStyle(fontSize: 20, color: Colors.white),
-                            ),
-                            Text(
-                              '\$${totalAmount.toStringAsFixed(2)}',
-                              style: TextStyle(fontSize: 20, color: Colors.white),
-                            ),
-                          ],
+                        Container(
+                          width: 130,
+                          child: Column(
+                            children: <Widget>[
+                              Text(
+                                'Monthly Goal:',
+                                style: TextStyle(fontSize: 20, color: Colors.white),
+                              ),
+                              Text(
+                                '\$${totalAmount.toStringAsFixed(2)}',
+                                style: TextStyle(fontSize: 20, color: Colors.white),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

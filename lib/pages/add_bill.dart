@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nus_orbital_chronos/pages/category_picker.dart';
 import 'package:nus_orbital_chronos/services/bill.dart';
@@ -153,7 +154,7 @@ class _AddBillState extends State<AddBill> {
                     child: Text(
                       _selectedDate == null
                           ? 'No Date Chosen!'
-                          : 'Picked Date: ${_selectedDate.toString()}',
+                          : 'Selected Date: ${DateFormat.yMMMd().format(_selectedDate!)}',
                     ),
                   ),
                   TextButton(
@@ -161,7 +162,7 @@ class _AddBillState extends State<AddBill> {
                       foregroundColor: Theme.of(context).primaryColor,
                     ),
                     child: Text(
-                      'Choose Date',
+                      'Select Date',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     onPressed: () {

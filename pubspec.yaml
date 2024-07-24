@@ -47,6 +47,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   flex_color_picker: ^3.5.1
   toggle_switch: ^2.3.0
+  fl_chart: ^0.68.0
 
 dev_dependencies:
   flutter_test:

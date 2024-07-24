@@ -28,6 +28,7 @@ import 'package:nus_orbital_chronos/services/assignment.dart';
 import 'package:nus_orbital_chronos/services/category.dart';
 import 'package:nus_orbital_chronos/services/color_adapter.dart';
 import 'package:nus_orbital_chronos/services/time_of_day_adapter.dart';
+import 'package:nus_orbital_chronos/services/quote.dart';
 
 void main() async {
   // Ensure that Flutter binding is initialized
@@ -46,7 +47,7 @@ void main() async {
   Hive.registerAdapter(CategoryAdapter()); // TypeId: 6
   Hive.registerAdapter(ColorAdapter()); // TypeId: 7
   Hive.registerAdapter(TimeOfDayAdapter()); // TypeId: 8
-  //Hive.registerAdapter(QuoteAdapter()); // TypeId: 9
+  Hive.registerAdapter(QuoteAdapter()); // TypeId: 9
 
   // Open Hive boxes
   await Hive.openBox<Bill>('Bills');
@@ -56,7 +57,7 @@ void main() async {
   await Hive.openBox<GradePoints>('GradePoints');
   await Hive.openBox<Assignment>('Assignments');
   await Hive.openBox<Category>('Expense Categories');
-  //await Hive.openBox<Quote>('Quotes');
+  await Hive.openBox<Quote>('Quotes');
 
   runApp(ChangeNotifierProvider(
     create: (context) => EventProvider(),
@@ -69,7 +70,7 @@ void main() async {
           '/budget_planner': (context) => BudgetPlanner(),
           '/schedule': (context) => CalendarPage(),
           '/gpa_calc': (context) => GPACalc(),
-          '/daily_quote': (context) => DailyQuote(),
+          '/daily_quote': (context) => DailyQuotesScreen(),
           '/assignment_tracker': (context) => AssignmentTracker(),
         },
 

@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nus_orbital_chronos/services/quote.dart';
 import 'package:nus_orbital_chronos/services/quote_service.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class DailyQuote extends StatefulWidget {
+class DailyQuotesScreen extends StatefulWidget {
   @override
-  _DailyQuoteState createState() => _DailyQuoteState();
+  _DailyQuotesScreenState createState() => _DailyQuotesScreenState();
 }
 
-class _DailyQuoteState extends State<DailyQuote> {
-  final Box<Quote> quoteBox = Hive.box<Quote>('Quotes');
-  bool _isLoading = true;
+class _DailyQuotesScreenState extends State<DailyQuotesScreen> {
+  late Box<Quote> quoteBox;
+  late Quote _selectedQuote;
   DateTime _selectedDay = DateTime.now();
-  DateTime _focusedDay = DateTime.now();
-  Quote? _selectedQuote;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    quoteBox = Hive.box<Quote>('Quotes');
     fetchAndSaveQuote();
   }
 
@@ -26,19 +27,26 @@ class _DailyQuoteState extends State<DailyQuote> {
     try {
       final today = DateTime.now();
       final savedQuote = quoteBox.values.firstWhere(
-            (quote) => quote.date.year == today.year && quote.date.month == today.month && quote.date.day == today.day,
-        orElse: () => Quote(text: '', date: DateTime.now()), // 返回一个默认的 Quote
+            (quote) =>
+        quote.date.year == today.year &&
+            quote.date.month == today.month &&
+            quote.date.day == today.day,
+        orElse: () => Quote(text: '', date: DateTime.now()),
       );
 
-      if (savedQuote.text.isEmpty) { // 检查是否为默认 Quote
+      if (savedQuote.text.isEmpty) {
         final newQuote = await QuoteService.fetchQuote();
+        print('New Quote: ${newQuote.text}');
         quoteBox.add(newQuote);
         setState(() {
           _isLoading = false;
+          _selectedQuote = newQuote;
         });
       } else {
+        print('Saved Quote: ${savedQuote.text}');
         setState(() {
           _isLoading = false;
+          _selectedQuote = savedQuote;
         });
       }
     } catch (e) {
@@ -52,10 +60,12 @@ class _DailyQuoteState extends State<DailyQuote> {
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     setState(() {
       _selectedDay = selectedDay;
-      _focusedDay = focusedDay;
       _selectedQuote = quoteBox.values.firstWhere(
-            (quote) => quote.date.year == selectedDay.year && quote.date.month == selectedDay.month && quote.date.day == selectedDay.day,
-        orElse: () => Quote(text: 'No quote for this day', date: selectedDay),
+            (quote) =>
+        quote.date.year == selectedDay.year &&
+            quote.date.month == selectedDay.month &&
+            quote.date.day == selectedDay.day,
+        orElse: () => Quote(text: 'No quote available for this day', date: selectedDay),
       );
     });
   }
@@ -64,51 +74,31 @@ class _DailyQuoteState extends State<DailyQuote> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Daily Quote', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.indigo,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded),
-          color: Colors.white,
-          onPressed: () { Navigator.pop(context); },
-        ),
+        title: Text('Daily Quotes'),
       ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : Column(
+      body: Column(
         children: [
           TableCalendar(
-            firstDay: DateTime.utc(2020, 1, 1),
-            lastDay: DateTime.utc(2030, 12, 31),
-            focusedDay: _focusedDay,
+            firstDay: DateTime.utc(2000, 1, 1),
+            lastDay: DateTime.utc(2100, 12, 31),
+            focusedDay: _selectedDay,
             selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
             onDaySelected: _onDaySelected,
-            calendarFormat: CalendarFormat.month,
-            startingDayOfWeek: StartingDayOfWeek.monday,
-            headerStyle: HeaderStyle(
-              formatButtonVisible: false,
-            ),
           ),
-          SizedBox(height: 20),
-          _selectedQuote != null
-              ? Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  _selectedQuote!.text,
-                  style: TextStyle(fontSize: 24, fontStyle: FontStyle.italic),
+          Expanded(
+            child: Center(
+              child: _isLoading
+                  ? CircularProgressIndicator()
+                  : Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  _selectedQuote?.text ?? 'No quote for today',
+                  style: TextStyle(fontSize: 24),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 20),
-                Text(
-                  'Date: ${_selectedQuote!.date.toLocal().toString().split(' ')[0]}',
-                  style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
-                ),
-              ],
+              ),
             ),
-          )
-              : Center(child: CircularProgressIndicator()),
+          ),
         ],
       ),
     );

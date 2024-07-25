@@ -1,8 +1,8 @@
-// Import Flutter material
+// Import Flutter
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 // Import Hive
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:nus_orbital_chronos/pages/assignment_tracker.dart';
 // Import Provider
 import 'package:provider/provider.dart';
 
@@ -14,6 +14,7 @@ import 'package:nus_orbital_chronos/pages/break_time.dart';
 import 'package:nus_orbital_chronos/pages/budget_planner.dart';
 import 'package:nus_orbital_chronos/pages/schedule.dart';
 import 'package:nus_orbital_chronos/pages/gpa_calc.dart';
+import 'package:nus_orbital_chronos/pages/assignment_tracker.dart';
 import 'package:nus_orbital_chronos/pages/daily_quote.dart';
 
 // Import services
@@ -59,39 +60,42 @@ void main() async {
   await Hive.openBox<Category>('Expense Categories');
   await Hive.openBox<Quote>('Quotes');
 
-  runApp(ChangeNotifierProvider(
-    create: (context) => EventProvider(),
-    child: MaterialApp(
-        initialRoute: '/home',
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(ChangeNotifierProvider(
+      create: (context) => EventProvider(),
+      child: MaterialApp(
+          initialRoute: '/home',
 
-        routes: {
-          '/home': (context) => Home(),
-          '/timer_config': (context) => TimerConfig(),
-          '/budget_planner': (context) => BudgetPlanner(),
-          '/schedule': (context) => CalendarPage(),
-          '/gpa_calc': (context) => GPACalc(),
-          '/daily_quote': (context) => DailyQuotesScreen(),
-          '/assignment_tracker': (context) => AssignmentTracker(),
-        },
+          routes: {
+            '/home': (context) => Home(),
+            '/timer_config': (context) => TimerConfig(),
+            '/budget_planner': (context) => BudgetPlanner(),
+            '/schedule': (context) => CalendarPage(),
+            '/gpa_calc': (context) => GPACalc(),
+            '/daily_quote': (context) => DailyQuotesScreen(),
+            '/assignment_tracker': (context) => AssignmentTracker(),
+          },
 
-        onGenerateRoute: (settings) {
-          if (settings.name == '/pomodoro') {
-            final args = settings.arguments as TimerData;
-            return MaterialPageRoute(
-              builder: (context) {
-                return Pomodoro(data: args);
-              },
-            );
-          } else if (settings.name == '/break_time') {
-            final args = settings.arguments as TimerData;
-            return MaterialPageRoute(
-              builder: (context) {
-                return BreakTime(data: args);
-              },
-            );
+          onGenerateRoute: (settings) {
+            if (settings.name == '/pomodoro') {
+              final args = settings.arguments as TimerData;
+              return MaterialPageRoute(
+                builder: (context) {
+                  return Pomodoro(data: args);
+                },
+              );
+            } else if (settings.name == '/break_time') {
+              final args = settings.arguments as TimerData;
+              return MaterialPageRoute(
+                builder: (context) {
+                  return BreakTime(data: args);
+                },
+              );
+            }
+            return null;
           }
-          return null;
-        }
-    ),
-  ));
+      ),
+    ));
+  });
 }

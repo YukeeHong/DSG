@@ -15,10 +15,9 @@ class SchedulerService {
   }
 
   Future<void> scheduleDailyNotification() async {
-    final quoteService = QuoteService();
-    final quote = await quoteService.fetchQuote();
+    final quote = await QuoteService.fetchQuote();
 
-    await _saveQuote(quote);
+    await _saveQuote(quote.text);
 
     final time = Time(8, 0, 0); // 8:00 AM
     final androidDetails = AndroidNotificationDetails(
@@ -32,7 +31,7 @@ class SchedulerService {
     await _notificationsPlugin.zonedSchedule(
       0,
       'Daily Quote',
-      quote,
+      quote.text,
       _nextInstanceOfTime(time),
       notificationDetails,
       androidAllowWhileIdle: true,

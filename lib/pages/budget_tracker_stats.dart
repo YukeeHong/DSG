@@ -83,7 +83,6 @@ class _BudgetTrackerStatsState extends State<BudgetTrackerStats> {
         _monthlyByCategory.add(PieChartSectionData(
           color: expCatBox.get(i)!.color,
           value: sums[i] / widget.expense * 100,
-          radius: 50,
           title: '${(sums[i] / widget.expense * 100).toStringAsFixed(2)}%',
           titleStyle: TextStyle(
             fontSize: 12,
@@ -307,20 +306,21 @@ class _BudgetTrackerStatsState extends State<BudgetTrackerStats> {
                                   PieChartData(
                                     borderData: FlBorderData(show: false),
                                     sectionsSpace: 0,
-                                    centerSpaceRadius: 40,
+                                    centerSpaceRadius: 30,
                                     sections: _monthlyByCategory,
                                   ),
                                 ),
                               ),
                             ),
+                            SizedBox(width: 5),
                             Container(
                               width: 150,
                               child: Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.all(5.0),
                                 child: Card(
                                   color: Colors.amber[100],
                                   child: Padding(
-                                    padding: const EdgeInsets.all(15.0),
+                                    padding: const EdgeInsets.all(10.0),
                                     child: ListView.builder(
                                         shrinkWrap: true,
                                         physics: NeverScrollableScrollPhysics(),
@@ -403,7 +403,7 @@ class _BudgetTrackerStatsState extends State<BudgetTrackerStats> {
                                   showTitles: true,
                                   getTitlesWidget: leftTitleWidgets,
                                   interval: dailySums.reduce(max) == 0 ? 1 : dailySums.reduce(max) / 5,
-                                  reservedSize: 48,
+                                  reservedSize: 40,
                                 ),
                               ),
                               topTitles: const AxisTitles(

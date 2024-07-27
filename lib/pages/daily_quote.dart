@@ -74,7 +74,13 @@ class _DailyQuotesScreenState extends State<DailyQuotesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Daily Quotes'),
+        title: const Text('Daily Quotes', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.indigo,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded),
+          color: Colors.white,
+          onPressed: () { Navigator.pop(context); },
+        ),
       ),
       body: Column(
         children: [

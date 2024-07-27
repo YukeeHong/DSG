@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_timetable/flutter_timetable.dart';
 import 'package:intl/intl.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:nus_orbital_chronos/services/event.dart';
 
-/// Timetable screen with all the stuff - controller, builders, etc.
 class CustomTimetableScreen extends StatefulWidget {
-  const CustomTimetableScreen({Key? key}) : super(key: key);
+  CustomTimetableScreen({Key? key}) : super(key: key);
   @override
   State<CustomTimetableScreen> createState() => _CustomTimetableScreenState();
 }
@@ -18,6 +19,7 @@ class _CustomTimetableScreenState extends State<CustomTimetableScreen> {
     startHour: 0,
     endHour: 23,
   );
+  late Box<Event> eventsBox;
 
   @override
   void initState() {
@@ -27,6 +29,18 @@ class _CustomTimetableScreenState extends State<CustomTimetableScreen> {
         controller.jumpTo(DateTime.now());
       });
     });
+    eventsBox = Hive.box<Event>('Events');
+    _makeTimetableData();
+  }
+
+  void _makeTimetableData() {
+    for (Event event in eventsBox.values.toList()) {
+      items.add(TimetableItem(
+        event.date.add(Duration(hours: event.startTime.hour, minutes: event.startTime.minute)),
+        event.date.add(Duration(hours: event.endTime.hour, minutes: event.endTime.minute)),
+        data: '${event.category.color.value.toRadixString(16)}_${event.title}',
+      ));
+    }
   }
 
   @override
@@ -110,7 +124,7 @@ class _CustomTimetableScreenState extends State<CustomTimetableScreen> {
       },
       itemBuilder: (item) => Container(
         decoration: BoxDecoration(
-          color: Colors.white.withAlpha(220),
+          color: Color(int.parse('${item.data!.substring(0, 8)}', radix: 16)),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -120,10 +134,45 @@ class _CustomTimetableScreenState extends State<CustomTimetableScreen> {
             ),
           ],
         ),
-        child: Center(
-          child: Text(
-            item.data ?? "",
-            style: const TextStyle(fontSize: 14),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                item.data!.substring(9),
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Color(int.parse('${item.data!.substring(0, 8)}', radix: 16)) == Colors.white
+                        ? Colors.black
+                        : Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                '${item.start.hour > 12
+                    ? item.start.hour - 12
+                    : item.start.hour
+                }:${item.start.minute.toString().padLeft(2, '0')} ${
+                    item.start.minute > 12
+                        ? 'PM'
+                        : 'AM'
+                } - ${item.end.hour > 12
+                    ? item.end.hour - 12
+                    : item.end.hour
+                }:${item.end.minute.toString().padLeft(2, '0')} ${
+                    item.end.minute > 12
+                        ? 'PM'
+                        : 'AM'
+                }',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Color(int.parse('${item.data!.substring(0, 8)}', radix: 16)) == Colors.white
+                      ? Colors.black
+                      : Colors.white,
+                ),
+              ),
+            ],
           ),
         ),
       ),

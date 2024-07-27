@@ -3,6 +3,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:provider/provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nus_orbital_chronos/pages/modify_event.dart';
+import 'package:nus_orbital_chronos/pages/timetable.dart';
 import 'package:nus_orbital_chronos/services/event_provider.dart';
 import 'package:nus_orbital_chronos/services/event.dart';
 
@@ -23,7 +24,7 @@ class _CalendarPageState extends State<CalendarPage> {
   @override
   void initState() {
     super.initState();
-    _selectedDay = _focusedDay;
+    _selectedDay = DateTime.now();
     eventsBox = Hive.box<Event>('Events');
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
   }
@@ -64,12 +65,24 @@ class _CalendarPageState extends State<CalendarPage> {
           color: Colors.white,
           onPressed: () { Navigator.pop(context); },
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.calendar_view_week),
+            color: Colors.white,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CustomTimetableScreen(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: ValueListenableBuilder(
           valueListenable: eventsBox.listenable(),
           builder: (context, box, _) {
-            final events = eventsBox.values.toList().where((event) => event.date == _selectedDay).toList();
-            events.sort((a, b) => compareTime(a.startTime, b.startTime));
             return Column(
               children: <Widget>[
                 TableCalendar<Event>(
@@ -94,7 +107,9 @@ class _CalendarPageState extends State<CalendarPage> {
                 ),
                 ValueListenableBuilder(
                   valueListenable: _selectedEvents,
-                  builder: (context, events, _) {
+                  builder: (context, e, _) {
+                    final events = _getEventsForDay(_selectedDay!);
+                    events.sort((a, b) => compareTime(a.startTime, b.startTime));
                     return Expanded(
                       child: ListView.builder(
                         itemCount: events.length,
@@ -143,6 +158,14 @@ class _CalendarPageState extends State<CalendarPage> {
                                 ),
                                 onPressed: () => _deleteEvent(event),
                               ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ModifyEvent(mode: false, id: event.id, date: _selectedDay!),
+                                  ),
+                                );
+                              },
                             ),
                           );
                         },

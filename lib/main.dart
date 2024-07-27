@@ -77,7 +77,6 @@ void main() async {
             '/gpa_calc': (context) => GPACalc(),
             '/daily_quote': (context) => DailyQuotesScreen(),
             '/assignment_tracker': (context) => AssignmentTracker(),
-            '/timetable': (context) => CustomTimetableScreen(),
           },
 
           onGenerateRoute: (settings) {

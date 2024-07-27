@@ -16,6 +16,7 @@ import 'package:nus_orbital_chronos/pages/schedule.dart';
 import 'package:nus_orbital_chronos/pages/gpa_calc.dart';
 import 'package:nus_orbital_chronos/pages/assignment_tracker.dart';
 import 'package:nus_orbital_chronos/pages/daily_quote.dart';
+import 'package:nus_orbital_chronos/pages/timetable.dart';
 
 // Import services
 import 'package:nus_orbital_chronos/services/timer_data.dart';
@@ -59,6 +60,7 @@ void main() async {
   await Hive.openBox<Assignment>('Assignments');
   await Hive.openBox<Category>('Expense Categories');
   await Hive.openBox<Quote>('Quotes');
+  await Hive.openBox<Category>('Event Categories');
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
@@ -75,6 +77,7 @@ void main() async {
             '/gpa_calc': (context) => GPACalc(),
             '/daily_quote': (context) => DailyQuotesScreen(),
             '/assignment_tracker': (context) => AssignmentTracker(),
+            '/timetable': (context) => CustomTimetableScreen(),
           },
 
           onGenerateRoute: (settings) {

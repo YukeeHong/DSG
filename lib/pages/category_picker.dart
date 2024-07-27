@@ -4,19 +4,21 @@ import 'package:nus_orbital_chronos/services/category.dart';
 import 'package:nus_orbital_chronos/pages/modify_category.dart';
 
 class CategoryPicker extends StatefulWidget {
-  const CategoryPicker({super.key});
+  final int boxId; // 0: Bill, 1: Event
+
+  const CategoryPicker({super.key, required this.boxId});
 
   @override
   State<CategoryPicker> createState() => _CategoryPickerState();
 }
 
 class _CategoryPickerState extends State<CategoryPicker> {
-  late Box<Category> expCatBox;
+  late Box<Category> box;
 
   @override
   void initState() {
     super.initState();
-    expCatBox = Hive.box<Category>('Expense Categories');
+    box = Hive.box<Category>(widget.boxId == 0 ? 'Expense Categories' : 'Event Categories');
   }
 
   @override
@@ -43,7 +45,7 @@ class _CategoryPickerState extends State<CategoryPicker> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ModifyCategory(modeAdd: true, id: -1),
+                      builder: (context) => ModifyCategory(modeAdd: true, id: -1, boxId: widget.boxId),
                     ),
                   );
                 },
@@ -51,7 +53,7 @@ class _CategoryPickerState extends State<CategoryPicker> {
               ),
               Expanded(
                 child: ValueListenableBuilder(
-                  valueListenable: expCatBox.listenable(),
+                  valueListenable: box.listenable(),
                   builder: (context, Box<Category> box, _) {
                     var cats = box.values.toList();
                     return Card(
@@ -82,7 +84,7 @@ class _CategoryPickerState extends State<CategoryPicker> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => ModifyCategory(modeAdd: false, id: cat.id),
+                                            builder: (context) => ModifyCategory(modeAdd: false, id: cat.id, boxId: widget.boxId),
                                           ),
                                         );
                                       },

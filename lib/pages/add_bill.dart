@@ -205,7 +205,7 @@ class _AddBillState extends State<AddBill> {
                         int id = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => CategoryPicker(),
+                            builder: (context) => CategoryPicker(boxId: 0),
                           ),
                         );
                         _selectedCategory = expCatBox.get(id);

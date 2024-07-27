@@ -17,6 +17,7 @@ class _HomeState extends State<Home> {
     Service(title: 'GPA Calculator', location: '/gpa_calc', appIcon: 'tomato.png'),
     Service(title: 'Assignment Tracker', location: '/assignment_tracker', appIcon: 'tomato.png'),
     Service(title: 'Daily Quote', location: '/daily_quote', appIcon: 'tomato.png'),
+    Service(title: 'Timetable', location: '/timetable', appIcon: 'tomato.png'),
   ];
 
   Widget build(BuildContext context) {

@@ -6,25 +6,26 @@ import 'package:flex_color_picker/flex_color_picker.dart';
 class ModifyCategory extends StatefulWidget {
   final bool modeAdd; // true: add, false: edit
   final int id;
-  const ModifyCategory({super.key, required this.modeAdd, required this.id});
+  final int boxId; // 0: Bill, 1: Event
+  const ModifyCategory({super.key, required this.modeAdd, required this.id, required this.boxId});
 
   @override
   State<ModifyCategory> createState() => _ModifyCategoryState();
 }
 
 class _ModifyCategoryState extends State<ModifyCategory> {
-  late Box<Category> expCatBox;
+  late Box<Category> box;
   final _titleController = TextEditingController();
   Color? _selectedColor;
 
   @override
   void initState() {
     super.initState();
-    expCatBox = Hive.box<Category>('Expense Categories');
+    box = Hive.box<Category>(widget.boxId == 0 ? 'Expense Categories' : 'Event Categories');
 
     if (!widget.modeAdd) {
-      _titleController.text = expCatBox.get(widget.id)!.title;
-      _selectedColor = expCatBox.get(widget.id)!.color;
+      _titleController.text = box.get(widget.id)!.title;
+      _selectedColor = box.get(widget.id)!.color;
     }
   }
 
@@ -32,7 +33,7 @@ class _ModifyCategoryState extends State<ModifyCategory> {
     int id = widget.id;
     if (id == -1) {
       int firstFree = 0;
-      var cats = expCatBox.values.toList();
+      var cats = box.values.toList();
       cats.sort((a, b) => a.id.compareTo(b.id));
       for (Category cat in cats) {
         if (cat.id == firstFree) {
@@ -45,7 +46,7 @@ class _ModifyCategoryState extends State<ModifyCategory> {
       id = firstFree;
     }
 
-    expCatBox.put(id, Category(
+    box.put(id, Category(
       title: _titleController.text,
       color: _selectedColor!,
       id: id,
@@ -143,7 +144,7 @@ class _ModifyCategoryState extends State<ModifyCategory> {
                 if(widget.id != -1)
                   ElevatedButton(
                     onPressed: () {
-                      expCatBox.delete(widget.id);
+                      box.delete(widget.id);
                       Navigator.pop(context);
                     },
                     child: Text('Delete'),

@@ -23,7 +23,7 @@ class EventAdapter extends TypeAdapter<Event> {
       fields[3] as TimeOfDay,
       fields[4] as TimeOfDay,
       fields[5] as Category,
-      fields[6] as int,
+      (fields[6] as List).cast<int>(),
       fields[7] as int,
     );
   }

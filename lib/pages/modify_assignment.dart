@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:intl/intl.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nus_orbital_chronos/services/assignment.dart';
+import 'package:nus_orbital_chronos/services/format_time_of_day.dart';
 
 class ModifyAssignment extends StatefulWidget {
   final String mode;
@@ -16,7 +17,6 @@ class ModifyAssignment extends StatefulWidget {
 class _ModifyAssignmentState extends State<ModifyAssignment> {
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
-  bool? isAM;
   String? mode;
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -35,7 +35,6 @@ class _ModifyAssignmentState extends State<ModifyAssignment> {
       int minutes = assignmentsBox.get(widget.id)!.due.minute;
       _selectedDate = assignmentsBox.get(widget.id)!.due.subtract(Duration(hours: hours, minutes: minutes));
       _selectedTime = TimeOfDay(hour: hours, minute: minutes);
-      isAM = (hours < 12);
     }
   }
 
@@ -63,7 +62,6 @@ class _ModifyAssignmentState extends State<ModifyAssignment> {
 
     if (pickedTime != null) {
       _selectedTime = pickedTime;
-      _selectedTime!.hour < 12 ? isAM = true : isAM = false;
       setState(() {});
     }
   }
@@ -181,9 +179,7 @@ class _ModifyAssignmentState extends State<ModifyAssignment> {
                               child: Text(
                                 _selectedTime == null
                                     ? 'No Time Chosen!'
-                                    : (isAM!
-                                    ? '${_selectedTime!.hour}:${_selectedTime!.minute.toString().padLeft(2, '0')} AM'
-                                    : '${_selectedTime!.hour - 12}:${_selectedTime!.minute.toString().padLeft(2, '0')} PM'),
+                                    : '${FormatTimeOfDay.formatTimeOfDay(_selectedTime!)}',
                               ),
                             ),
                             TextButton(
@@ -199,7 +195,7 @@ class _ModifyAssignmentState extends State<ModifyAssignment> {
                           ],
                         ),
                       ),
-                    if (mode == 'View' && _selectedTime != null && _selectedDate != null && isAM != null)
+                    if (mode == 'View' && _selectedTime != null && _selectedDate != null)
                       Container(
                         height: 50,
                         child: Row(
@@ -208,9 +204,7 @@ class _ModifyAssignmentState extends State<ModifyAssignment> {
                             SizedBox(width: 20),
                             Text(DateFormat.yMMMd().format(_selectedDate!)),
                             SizedBox(width: 10),
-                            Text((isAM!
-                                ? '${_selectedTime!.hour}:${_selectedTime!.minute.toString().padLeft(2, '0')} AM'
-                                : '${_selectedTime!.hour - 12}:${_selectedTime!.minute.toString().padLeft(2, '0')} PM')),
+                            Text('${FormatTimeOfDay.formatTimeOfDay(_selectedTime!)}'),
                           ],
                         ),
                       ),

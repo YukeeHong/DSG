@@ -6,6 +6,7 @@ import 'package:nus_orbital_chronos/pages/modify_event.dart';
 import 'package:nus_orbital_chronos/pages/timetable.dart';
 import 'package:nus_orbital_chronos/services/event_provider.dart';
 import 'package:nus_orbital_chronos/services/event.dart';
+import 'package:nus_orbital_chronos/services/format_time_of_day.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({Key? key}) : super(key: key);
@@ -35,8 +36,22 @@ class _CalendarPageState extends State<CalendarPage> {
     super.dispose();
   }
 
+  bool isEventOnDay(Event event, DateTime day) {
+    if (event.repetition[0] == 0) {
+      // Mode 0
+      return isSameDay(event.date, day);
+    } else if (event.repetition[0] == 1) {
+      // Mode 1
+      return isSameDay(event.date, day) || event.date.isBefore(day) && (day.difference(event.date).inDays % event.repetition[8] == 0);
+    } else if (event.repetition[0] == 2) {
+      // Mode 2
+      return isSameDay(event.date, day) || event.date.isBefore(day) && event.repetition[day.weekday] == 1;
+    }
+    return false;
+  }
+
   List<Event> _getEventsForDay(DateTime day) {
-    return eventsBox.values.where((event) => isSameDay(event.date, day)).toList();
+    return eventsBox.values.where((event) => isEventOnDay(event, day)).toList();
   }
 
   void _deleteEvent(Event event) {
@@ -86,8 +101,8 @@ class _CalendarPageState extends State<CalendarPage> {
             return Column(
               children: <Widget>[
                 TableCalendar<Event>(
-                  firstDay: DateTime.utc(2010, 10, 16),
-                  lastDay: DateTime.utc(2030, 3, 14),
+                  firstDay: DateTime.now().subtract(Duration(days: 1000)),
+                  lastDay: DateTime.now().add(Duration(days: 1000)),
                   focusedDay: _focusedDay,
                   selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
                   calendarFormat: _calendarFormat,
@@ -128,21 +143,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                 ),
                               ),
                               subtitle: Text(
-                                '${event.category.title} - ${event.startTime.hour > 12
-                                    ? event.startTime.hour - 12
-                                    : event.startTime.hour
-                                }:${event.startTime.minute.toString().padLeft(2, '0')} ${
-                                    event.startTime.minute > 12
-                                        ? 'PM'
-                                        : 'AM'
-                                } - ${event.endTime.hour > 12
-                                    ? event.endTime.hour - 12
-                                    : event.endTime.hour
-                                }:${event.endTime.minute.toString().padLeft(2, '0')} ${
-                                    event.endTime.minute > 12
-                                        ? 'PM'
-                                        : 'AM'
-                                }',
+                                '${event.category.title} - ${FormatTimeOfDay.formatTimeOfDay(event.startTime)} - ${FormatTimeOfDay.formatTimeOfDay(event.endTime)}',
                                 style: TextStyle(
                                   color: event.category.color == Colors.white
                                       ? Colors.black

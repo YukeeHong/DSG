@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nus_orbital_chronos/pages/budget_tracker_stats.dart';
 import 'package:nus_orbital_chronos/services/bill.dart';
 import 'package:nus_orbital_chronos/pages/add_bill.dart';
+import 'package:nus_orbital_chronos/services/format_time_of_day.dart';
 
 class BudgetPlanner extends StatefulWidget {
   @override
@@ -196,15 +197,8 @@ class _BudgetPlannerState extends State<BudgetPlanner> {
                                           ),
                                         ),
                                         subtitle: Text(
-                                          '\$${billsOnDate[i].amount.toStringAsFixed(2)} - ${billsOnDate[i].category.title} - ${
-                                              billsOnDate[i].time.hour > 12
-                                              ? billsOnDate[i].time.hour - 12
-                                              : billsOnDate[i].time.hour
-                                          }:${billsOnDate[i].time.minute.toString().padLeft(2, '0')} ${
-                                              billsOnDate[i].time.hour > 12
-                                              ? 'PM'
-                                              : 'AM'
-                                          }',
+                                          '\$${billsOnDate[i].amount.toStringAsFixed(2)} - ${billsOnDate[i].category.title} - '
+                                              '${FormatTimeOfDay.formatTimeOfDay(TimeOfDay(hour: billsOnDate[i].time.hour, minute: billsOnDate[i].time.minute))}',
                                           style: TextStyle(
                                             color: billsOnDate[i].category.color == Colors.white
                                                 ? Colors.black

@@ -24,12 +24,12 @@ class Event extends HiveObject {
   @HiveField(5)
   final Category category;
 
-  /** 0: No repetition
-   *  1: Repeat every _ days
-   *  2: Repeat on certain day(s) of the week
+  /** [0] => 0: No repetition, 1: Repeat every N days, 2: Repeat on certain day(s) of the week
+   *  [1] - [7] => Sun - Sat (Mode 2)
+   *  [8] => N (Mode 1)
    */
   @HiveField(6)
-  final int repetition;
+  final List<int> repetition;
 
   @HiveField(7)
   final int id;

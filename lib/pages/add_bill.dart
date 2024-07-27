@@ -5,6 +5,7 @@ import 'package:nus_orbital_chronos/pages/category_picker.dart';
 import 'package:nus_orbital_chronos/services/bill.dart';
 import 'package:nus_orbital_chronos/services/category.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+import 'package:nus_orbital_chronos/services/format_time_of_day.dart';
 
 class AddBill extends StatefulWidget {
   final int id;
@@ -23,7 +24,6 @@ class _AddBillState extends State<AddBill> {
   DateTime? _selectedDate;
   Category? _selectedCategory;
   TimeOfDay? _selectedTime;
-  bool? isAM;
   bool? isExpense;
 
   @override
@@ -40,7 +40,6 @@ class _AddBillState extends State<AddBill> {
       _selectedDate = bill.date;
       _selectedCategory = (bill.category.id == -2) ? null : bill.category;
       _selectedTime = bill.time;
-      _selectedTime!.hour < 12 ? isAM = true : isAM = false;
     }
 
     if (isExpense == null) {
@@ -130,7 +129,6 @@ class _AddBillState extends State<AddBill> {
 
     if (pickedTime != null) {
       _selectedTime = pickedTime;
-      _selectedTime!.hour < 12 ? isAM = true : isAM = false;
       setState(() {});
     }
   }
@@ -223,9 +221,7 @@ class _AddBillState extends State<AddBill> {
                     child: Text(
                       _selectedTime == null
                           ? 'No Time Chosen!'
-                          : (isAM!
-                          ? '${_selectedTime!.hour}:${_selectedTime!.minute.toString().padLeft(2, '0')} AM'
-                          : '${_selectedTime!.hour - 12}:${_selectedTime!.minute.toString().padLeft(2, '0')} PM'),
+                          : '${FormatTimeOfDay.formatTimeOfDay(_selectedTime!)}',
                     ),
                   ),
                   TextButton(

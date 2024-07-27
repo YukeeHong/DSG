@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nus_orbital_chronos/services/event.dart';
 import 'package:nus_orbital_chronos/services/category.dart';
 import 'package:nus_orbital_chronos/pages/category_picker.dart';
+import 'package:nus_orbital_chronos/services/format_time_of_day.dart';
 
 class ModifyEvent extends StatefulWidget {
   final bool mode; // true: Add, false: Edit
@@ -21,14 +22,14 @@ class _ModifyEventState extends State<ModifyEvent> {
   TimeOfDay? _selectedStartTime;
   TimeOfDay? _selectedEndTime;
   Category? _selectedCategory;
-  bool? isAMStart;
-  bool? isAMEnd;
   bool? modeAdd;
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
+  final _nController = TextEditingController();
   late Box<Event> eventsBox;
   late Box<Category> evCatBox;
-  int? repetition;
+  // [0] = mode 0: none 1: every n days 2: day of week
+  List<int> repetition = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 
   @override
   void initState() {
@@ -44,8 +45,6 @@ class _ModifyEventState extends State<ModifyEvent> {
       _selectedEndTime = eventsBox.get(widget.id)!.endTime;
       _selectedDate = eventsBox.get(widget.id)!.date;
       _selectedCategory = eventsBox.get(widget.id)!.category;
-      isAMStart = (_selectedStartTime!.hour < 12);
-      isAMEnd = (_selectedEndTime!.hour < 12);
       repetition = eventsBox.get(widget.id)!.repetition;
     } else {
       _selectedDate = widget.date;
@@ -78,16 +77,50 @@ class _ModifyEventState extends State<ModifyEvent> {
     if (pickedTime != null) {
       if (isStart) {
         _selectedStartTime = pickedTime;
-        pickedTime.hour < 12 ? isAMStart = true : isAMStart = false;
       } else {
         _selectedEndTime = pickedTime;
-        pickedTime.hour < 12 ? isAMEnd = true : isAMEnd = false;
       }
       setState(() {});
     }
   }
 
+  int compareTime(TimeOfDay a, TimeOfDay b) {
+    if (a.hour == b.hour) {
+      if (a.minute > b.minute) return 1;
+      if (a.minute < b.minute) return -1;
+      return 0;
+    }
+    if (a.hour > b.hour) return 1;
+    return -1;
+  }
+
   void _saveEvent() {
+    if (_titleController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Title cannot be empty')),
+      );
+      return;
+    }
+
+    if (_selectedStartTime == null || _selectedEndTime == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please select start and end time')),
+      );
+    }
+
+    if (_selectedCategory == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please select category')),
+      );
+    }
+
+    if (compareTime(_selectedStartTime!, _selectedEndTime!) >= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Start time must come before end time')),
+      );
+      return;
+    }
+
     int firstEmpty;
     if (modeAdd!) {
       var events = eventsBox.values.toList();
@@ -102,15 +135,13 @@ class _ModifyEventState extends State<ModifyEvent> {
       }
     } else { firstEmpty = widget.id; }
 
-    if (_titleController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Title cannot be empty!')),
-      );
-      return;
-    }
-
     final String title = _titleController.text;
     final String description = _descriptionController.text;
+
+    if (repetition[0] == 1) repetition = [1, 0, 0, 0, 0, 0, 0, 0, int.parse(_nController.text)];
+    else if (repetition[0] == 2) repetition[8] = 0;
+    else repetition = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+
     final event = Event(
       title,
       _selectedDate!,
@@ -118,12 +149,18 @@ class _ModifyEventState extends State<ModifyEvent> {
       _selectedStartTime!,
       _selectedEndTime!,
       _selectedCategory!,
-      0,
+      repetition,
       firstEmpty,
     );
 
     eventsBox.put(firstEmpty, event);
     Navigator.pop(context);
+  }
+
+  void _toggleOnDay(int day) {
+    // 1 - 7: Sun - Sat
+    repetition[day] = 1 - repetition[day];
+    setState(() {});
   }
 
   @override
@@ -183,9 +220,7 @@ class _ModifyEventState extends State<ModifyEvent> {
                             child: Text(
                               _selectedStartTime == null
                                   ? 'No Time Chosen!'
-                                  : (isAMStart!
-                                  ? '${_selectedStartTime!.hour}:${_selectedStartTime!.minute.toString().padLeft(2, '0')} AM'
-                                  : '${_selectedStartTime!.hour - 12}:${_selectedStartTime!.minute.toString().padLeft(2, '0')} PM'),
+                                  : '${FormatTimeOfDay.formatTimeOfDay(_selectedStartTime!)}',
                             ),
                             onPressed: () {
                               _pickTime(true);
@@ -207,9 +242,7 @@ class _ModifyEventState extends State<ModifyEvent> {
                             child: Text(
                               _selectedEndTime == null
                                   ? 'No Time Chosen!'
-                                  : (isAMEnd!
-                                  ? '${_selectedEndTime!.hour}:${_selectedEndTime!.minute.toString().padLeft(2, '0')} AM'
-                                  : '${_selectedEndTime!.hour - 12}:${_selectedEndTime!.minute.toString().padLeft(2, '0')} PM'),
+                                  : '${FormatTimeOfDay.formatTimeOfDay(_selectedEndTime!)}',
                             ),
                             onPressed: () {
                               _pickTime(false);
@@ -251,6 +284,165 @@ class _ModifyEventState extends State<ModifyEvent> {
                         ],
                       ),
                     ),
+                    Container(
+                      height: 50,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text('Repeat', style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.6))),
+                          SizedBox(width: 10),
+                          SizedBox(
+                            width: 200,
+                            child: DropdownButton(
+                              value: repetition[0],
+                              icon: const Icon(Icons.arrow_drop_down),
+                              onChanged: (int? newOption) {
+                                setState(() {
+                                  repetition[0] = newOption!;
+                                });
+                              },
+                              items: const [
+                                DropdownMenuItem(
+                                  value: 0,
+                                  child: Text('None'),
+                                ),
+                                DropdownMenuItem(
+                                  value: 1,
+                                  child: Text('Every N days'),
+                                ),
+                                DropdownMenuItem(
+                                  value: 2,
+                                  child: Text('Select days of week'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (repetition[0] == 1)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          SizedBox(
+                            width: 50,
+                            height: 50,
+                            child: TextField(
+                              controller: _nController,
+                              decoration: InputDecoration(labelText: 'N *'),
+                              keyboardType: TextInputType.number,
+                            ),
+                          ),
+                        ],
+                      ),
+                    if (repetition[0] == 2)
+                      Container(
+                        height: 55,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            SizedBox(
+                              width: 35,
+                              child: TextButton(
+                                onPressed: () => _toggleOnDay(1),
+                                child: Text(
+                                  'S',
+                                  style: TextStyle(
+                                    color: repetition[1] == 0 ? Colors.black : Theme.of(context).primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 35,
+                              child: TextButton(
+                                onPressed: () => _toggleOnDay(2),
+                                child: Text(
+                                  'M',
+                                  style: TextStyle(
+                                    color: repetition[2] == 0 ? Colors.black : Theme.of(context).primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 35,
+                              child: TextButton(
+                                onPressed: () => _toggleOnDay(3),
+                                child: Text(
+                                  'T',
+                                  style: TextStyle(
+                                    color: repetition[3] == 0 ? Colors.black : Theme.of(context).primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 35,
+                              child: TextButton(
+                                onPressed: () => _toggleOnDay(4),
+                                child: Text(
+                                  'W',
+                                  style: TextStyle(
+                                    color: repetition[4] == 0 ? Colors.black : Theme.of(context).primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 35,
+                              child: TextButton(
+                                onPressed: () => _toggleOnDay(5),
+                                child: Text(
+                                  'T',
+                                  style: TextStyle(
+                                    color: repetition[5] == 0 ? Colors.black : Theme.of(context).primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 35,
+                              child: TextButton(
+                                onPressed: () => _toggleOnDay(6),
+                                child: Text(
+                                  'F',
+                                  style: TextStyle(
+                                    color: repetition[6] == 0 ? Colors.black : Theme.of(context).primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 35,
+                              child: TextButton(
+                                onPressed: () => _toggleOnDay(7),
+                                child: Text(
+                                  'S',
+                                  style: TextStyle(
+                                    color: repetition[7] == 0 ? Colors.black : Theme.of(context).primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                   ],
                 ),
               ),

@@ -3,6 +3,7 @@ import 'package:flutter_timetable/flutter_timetable.dart';
 import 'package:intl/intl.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nus_orbital_chronos/services/event.dart';
+import 'package:nus_orbital_chronos/services/format_time_of_day.dart';
 
 class CustomTimetableScreen extends StatefulWidget {
   CustomTimetableScreen({Key? key}) : super(key: key);
@@ -34,14 +35,47 @@ class _CustomTimetableScreenState extends State<CustomTimetableScreen> {
   }
 
   void _makeTimetableData() {
+    final first = DateTime.now().subtract(Duration(days: 1000));
+    final last = DateTime.now().add(Duration(days: 1000));
     for (Event event in eventsBox.values.toList()) {
-      items.add(TimetableItem(
-        event.date.add(Duration(hours: event.startTime.hour, minutes: event.startTime.minute)),
-        event.date.add(Duration(hours: event.endTime.hour, minutes: event.endTime.minute)),
-        data: '${event.category.color.value.toRadixString(16)}_${event.title}',
-      ));
+      addEventToTimetable(event, first, last);
     }
   }
+
+  void addEventToTimetable(Event event, DateTime start, DateTime end) {
+    DateTime current = event.date;
+
+    if (event.repetition[0] == 0) {
+      // Mode 0
+      if (current.isAfter(start) && current.isBefore(end)) {
+        items.add(createTimetableItem(event, current));
+      }
+    } else if (event.repetition[0] == 1) {
+      // Mode 1
+      while (current.isBefore(end)) {
+        if (current.isAfter(start)) {
+          items.add(createTimetableItem(event, current));
+        }
+        current = current.add(Duration(days: event.repetition[8]));
+      }
+    } else if (event.repetition[0] == 2) {
+      // Mode 2
+      while (current.isBefore(end)) {
+        if (event.repetition[current.weekday] == 1 && current.isAfter(start)) {
+          items.add(createTimetableItem(event, current));
+        }
+        current = current.add(Duration(days: 1));
+      }
+    }
+  }
+
+    TimetableItem<String> createTimetableItem(Event event, DateTime date) {
+      return TimetableItem(
+        date.add(Duration(hours: event.startTime.hour, minutes: event.startTime.minute)),
+        date.add(Duration(hours: event.endTime.hour, minutes: event.endTime.minute)),
+        data: '${event.category.color.value.toRadixString(16)}_${event.title}',
+      );
+    }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -150,21 +184,8 @@ class _CustomTimetableScreenState extends State<CustomTimetableScreen> {
                 ),
               ),
               Text(
-                '${item.start.hour > 12
-                    ? item.start.hour - 12
-                    : item.start.hour
-                }:${item.start.minute.toString().padLeft(2, '0')} ${
-                    item.start.minute > 12
-                        ? 'PM'
-                        : 'AM'
-                } - ${item.end.hour > 12
-                    ? item.end.hour - 12
-                    : item.end.hour
-                }:${item.end.minute.toString().padLeft(2, '0')} ${
-                    item.end.minute > 12
-                        ? 'PM'
-                        : 'AM'
-                }',
+                '${FormatTimeOfDay.formatTimeOfDay(TimeOfDay(hour: item.start.hour, minute: item.start.minute))}'
+                    ' - ${FormatTimeOfDay.formatTimeOfDay(TimeOfDay(hour: item.end.hour, minute: item.end.minute))}',
                 style: TextStyle(
                   fontSize: 12,
                   color: Color(int.parse('${item.data!.substring(0, 8)}', radix: 16)) == Colors.white

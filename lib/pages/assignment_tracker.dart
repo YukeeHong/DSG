@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nus_orbital_chronos/pages/modify_assignment.dart';
 import 'package:nus_orbital_chronos/services/assignment.dart';
+import 'package:nus_orbital_chronos/services/format_time_of_day.dart';
 
 class AssignmentTracker extends StatefulWidget {
   const AssignmentTracker({super.key});
@@ -68,9 +69,8 @@ class _AssignmentTrackerState extends State<AssignmentTracker> {
                             ),
                             child: ListTile(
                               title: Text(assignment.title, style: TextStyle(fontWeight: FontWeight.bold),),
-                              subtitle: Text('Deadline: ${DateFormat.yMMMd().format(assignment.due)}  ${assignment.due.hour < 12
-                                  ? '${assignment.due.hour}:${assignment.due.minute.toString().padLeft(2, '0')} AM'
-                                  : '${assignment.due.hour - 12}:${assignment.due.minute.toString().padLeft(2, '0')} PM'}',
+                              subtitle: Text('Deadline: ${DateFormat.yMMMd().format(assignment.due)} '
+                                  '${FormatTimeOfDay.formatTimeOfDay(TimeOfDay(hour: assignment.due.hour, minute: assignment.due.minute))}',
                               style: TextStyle(color: assignment.due.subtract(Duration(days: 3)).isBefore(DateTime.now())
                                   ? Colors.red : Colors.black),
                               ),

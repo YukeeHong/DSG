@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 // Import pages
 import 'package:nus_orbital_chronos/splash_screen.dart';
 import 'package:nus_orbital_chronos/pages/home.dart';
-import 'package:nus_orbital_chronos/pages/pomodoro_new.dart';
+import 'package:nus_orbital_chronos/pages/pomodoro.dart';
 import 'package:nus_orbital_chronos/pages/timer_config.dart';
 import 'package:nus_orbital_chronos/pages/break_time.dart';
 import 'package:nus_orbital_chronos/pages/budget_planner.dart';

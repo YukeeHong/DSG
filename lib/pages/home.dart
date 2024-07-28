@@ -12,11 +12,11 @@ class _HomeState extends State<Home> {
 
   List<Service> services = [
     Service(title: 'Focus Mode', location: '/timer_config', appIcon: 'target.png'),
-    Service(title: 'Budget Planner', location: '/budget_planner', appIcon: 'dollar.png'),
+    Service(title: 'Budget Planner', location: '/budget_planner', appIcon: 'wallet.png'),
     Service(title: 'Schedule', location: '/schedule', appIcon: 'calendar.png'),
-    Service(title: 'GPA Calculator', location: '/gpa_calc', appIcon: 'tomato.png'),
-    Service(title: 'Assignment Tracker', location: '/assignment_tracker', appIcon: 'tomato.png'),
-    Service(title: 'Daily Quote', location: '/daily_quote', appIcon: 'tomato.png'),
+    Service(title: 'GPA Calculator', location: '/gpa_calc', appIcon: 'gpa_calc.png'),
+    Service(title: 'Assignment Tracker', location: '/assignment_tracker', appIcon: 'assignment_tracker.png'),
+    Service(title: 'Daily Quote', location: '/daily_quote', appIcon: 'daily_quotes.png'),
   ];
 
   Widget build(BuildContext context) {
@@ -32,6 +32,7 @@ class _HomeState extends State<Home> {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 4.0),
             child: Card(
+              color: Colors.white,
               child: ListTile(
                 onTap: () {
                   Navigator.pushNamed(context, services[index].location);

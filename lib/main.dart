@@ -7,6 +7,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
 // Import pages
+import 'package:nus_orbital_chronos/splash_screen.dart';
 import 'package:nus_orbital_chronos/pages/home.dart';
 import 'package:nus_orbital_chronos/pages/pomodoro.dart';
 import 'package:nus_orbital_chronos/pages/timer_config.dart';
@@ -66,9 +67,10 @@ void main() async {
     runApp(ChangeNotifierProvider(
       create: (context) => EventProvider(),
       child: MaterialApp(
-          initialRoute: '/home',
+          initialRoute: '/splash_screen',
 
           routes: {
+            '/splash_screen': (context) => SplashScreen(),
             '/home': (context) => Home(),
             '/timer_config': (context) => TimerConfig(),
             '/budget_planner': (context) => BudgetPlanner(),

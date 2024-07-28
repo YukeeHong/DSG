@@ -122,7 +122,7 @@ class _ModifyEventState extends State<ModifyEvent> {
       return;
     }
 
-    if (int.parse(_nController.text) < 1 || int.parse(_nController.text) > 30) {
+    if (repetition[0] == 1 && (int.parse(_nController.text) < 1 || int.parse(_nController.text) > 30)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please enter a value from 1-30 for N')),
       );

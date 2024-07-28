@@ -19,17 +19,20 @@ class QuoteAdapter extends TypeAdapter<Quote> {
     return Quote(
       text: fields[0] as String,
       date: fields[1] as DateTime,
+      author: fields[2] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Quote obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.text)
       ..writeByte(1)
-      ..write(obj.date);
+      ..write(obj.date)
+      ..writeByte(2)
+      ..write(obj.author);
   }
 
   @override

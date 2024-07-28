@@ -8,7 +8,7 @@ class QuoteService {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body)[0];
-      return Quote(text: data['q'], date: DateTime.now());
+      return Quote(text: data['q'], date: DateTime.now(), author: data['a']);
     } else {
       throw Exception('Failed to load quote');
     }

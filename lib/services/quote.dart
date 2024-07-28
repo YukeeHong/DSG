@@ -10,5 +10,8 @@ class Quote {
   @HiveField(1)
   final DateTime date;
 
-  Quote({required this.text, required this.date});
+  @HiveField(2)
+  final String author;
+
+  Quote({required this.text, required this.date, required this.author});
 }

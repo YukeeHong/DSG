@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nus_orbital_chronos/services/quote.dart';
@@ -31,7 +32,7 @@ class _DailyQuotesScreenState extends State<DailyQuotesScreen> {
         quote.date.year == today.year &&
             quote.date.month == today.month &&
             quote.date.day == today.day,
-        orElse: () => Quote(text: '', date: DateTime.now()),
+        orElse: () => Quote(text: '', date: DateTime.now(), author: ''),
       );
 
       if (savedQuote.text.isEmpty) {
@@ -65,7 +66,7 @@ class _DailyQuotesScreenState extends State<DailyQuotesScreen> {
         quote.date.year == selectedDay.year &&
             quote.date.month == selectedDay.month &&
             quote.date.day == selectedDay.day,
-        orElse: () => Quote(text: 'No quote available for this day', date: selectedDay),
+        orElse: () => Quote(text: 'No quote available for this day', date: selectedDay, author: ''),
       );
     });
   }
@@ -97,10 +98,20 @@ class _DailyQuotesScreenState extends State<DailyQuotesScreen> {
                   ? CircularProgressIndicator()
                   : Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  _selectedQuote?.text ?? 'No quote for today',
-                  style: TextStyle(fontSize: 24),
-                  textAlign: TextAlign.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      _selectedQuote.text,
+                      style: TextStyle(fontSize: 24, fontStyle: FontStyle.italic, fontFamily: 'PTSerif'),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 15),
+                    Text(
+                      '- ${_selectedQuote.author}',
+                      style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic, fontFamily: 'PTSerif'),
+                    ),
+                  ],
                 ),
               ),
             ),

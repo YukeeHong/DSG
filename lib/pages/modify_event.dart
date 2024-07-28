@@ -46,6 +46,7 @@ class _ModifyEventState extends State<ModifyEvent> {
       _selectedDate = eventsBox.get(widget.id)!.date;
       _selectedCategory = eventsBox.get(widget.id)!.category;
       repetition = eventsBox.get(widget.id)!.repetition;
+      _nController.text = repetition[8].toString();
     } else {
       _selectedDate = widget.date;
     }
@@ -117,6 +118,13 @@ class _ModifyEventState extends State<ModifyEvent> {
     if (compareTime(_selectedStartTime!, _selectedEndTime!) >= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Start time must come before end time')),
+      );
+      return;
+    }
+
+    if (int.parse(_nController.text) < 1 || int.parse(_nController.text) > 30) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter a value from 1-30 for N')),
       );
       return;
     }

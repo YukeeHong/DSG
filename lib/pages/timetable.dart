@@ -43,16 +43,14 @@ class _CustomTimetableScreenState extends State<CustomTimetableScreen> {
   }
 
   void addEventToTimetable(Event event, DateTime start, DateTime end) {
-    DateTime current = event.date;
+    DateTime current = DateTime(event.date.year, event.date.month, event.date.day);
 
     if (event.repetition[0] == 0) {
       // Mode 0
-      if (current.isAfter(start) && current.isBefore(end)) {
-        items.add(createTimetableItem(event, current));
-      }
+      items.add(createTimetableItem(event, current));
     } else if (event.repetition[0] == 1) {
       // Mode 1
-      while (current.isBefore(end)) {
+      while (isSameDay(current, event.date) || current.isBefore(end)) {
         if (current.isAfter(start)) {
           items.add(createTimetableItem(event, current));
         }
@@ -60,8 +58,8 @@ class _CustomTimetableScreenState extends State<CustomTimetableScreen> {
       }
     } else if (event.repetition[0] == 2) {
       // Mode 2
-      while (current.isBefore(end)) {
-        if (event.repetition[current.weekday] == 1 && current.isAfter(start)) {
+      while (isSameDay(current, event.date) || current.isBefore(end)) {
+        if (event.repetition[current.weekday % 7 + 1] == 1 && current.isAfter(start)) {
           items.add(createTimetableItem(event, current));
         }
         current = current.add(Duration(days: 1));
@@ -76,6 +74,10 @@ class _CustomTimetableScreenState extends State<CustomTimetableScreen> {
         data: '${event.category.color.value.toRadixString(16)}_${event.title}',
       );
     }
+
+  bool isSameDay(DateTime a, DateTime b) {
+    return a.year == b.year && b.month == b.month && a.day == b.day;
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(

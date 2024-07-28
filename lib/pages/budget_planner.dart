@@ -96,7 +96,7 @@ class _BudgetPlannerState extends State<BudgetPlanner> {
                 child: Container(
                   width: double.infinity,
                   child: Card(
-                    color: Theme.of(context).primaryColor,
+                    color: Colors.indigo[400],
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       child: Column(
@@ -185,7 +185,7 @@ class _BudgetPlannerState extends State<BudgetPlanner> {
                                   Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 8),
                                     child: Card(
-                                      color: billsOnDate[i].category.color.withOpacity(0.7),
+                                      color: billsOnDate[i].category.color,
                                       child: ListTile(
                                         title: Text(
                                           billsOnDate[i].description,

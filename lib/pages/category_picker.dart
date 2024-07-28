@@ -66,7 +66,7 @@ class _CategoryPickerState extends State<CategoryPicker> {
                               return Padding(
                                 padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 4.0),
                                 child: Card(
-                                  color: cat.color.withOpacity(0.7),
+                                  color: cat.color,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(15.0),
                                   ),
@@ -79,7 +79,10 @@ class _CategoryPickerState extends State<CategoryPicker> {
                                       ),
                                     ),
                                     trailing: IconButton(
-                                      icon: Icon(Icons.settings),
+                                      icon: Icon(
+                                        Icons.settings,
+                                        color: cat.color == Colors.white ? Colors.black : Colors.white,
+                                      ),
                                       onPressed: () {
                                         Navigator.push(
                                           context,

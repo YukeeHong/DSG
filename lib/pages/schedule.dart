@@ -42,10 +42,10 @@ class _CalendarPageState extends State<CalendarPage> {
       return isSameDay(event.date, day);
     } else if (event.repetition[0] == 1) {
       // Mode 1
-      return isSameDay(event.date, day) || event.date.isBefore(day) && (day.difference(event.date).inDays % event.repetition[8] == 0);
+      return isSameDay(event.date, day) || event.date.isBefore(day) && ((day.difference(event.date).inDays + 1) % event.repetition[8] == 0);
     } else if (event.repetition[0] == 2) {
       // Mode 2
-      return isSameDay(event.date, day) || event.date.isBefore(day) && event.repetition[day.weekday] == 1;
+      return isSameDay(event.date, day) || event.date.isBefore(day) && event.repetition[day.weekday % 7 + 1] == 1;
     }
     return false;
   }
@@ -131,7 +131,7 @@ class _CalendarPageState extends State<CalendarPage> {
                         itemBuilder: (context, index) {
                           final event = events[index];
                           return Card(
-                            color: event.category.color.withOpacity(0.7),
+                            color: event.category.color,
                             child: ListTile(
                               title: Text(
                                 event.title,

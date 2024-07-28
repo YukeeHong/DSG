@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // Import Hive
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:nus_orbital_chronos/services/focus_mode_time.dart';
 // Import Provider
 import 'package:provider/provider.dart';
 
 // Import pages
 import 'package:nus_orbital_chronos/splash_screen.dart';
 import 'package:nus_orbital_chronos/pages/home.dart';
-import 'package:nus_orbital_chronos/pages/pomodoro.dart';
+import 'package:nus_orbital_chronos/pages/pomodoro_new.dart';
 import 'package:nus_orbital_chronos/pages/timer_config.dart';
 import 'package:nus_orbital_chronos/pages/break_time.dart';
 import 'package:nus_orbital_chronos/pages/budget_planner.dart';
@@ -17,6 +18,7 @@ import 'package:nus_orbital_chronos/pages/schedule.dart';
 import 'package:nus_orbital_chronos/pages/gpa_calc.dart';
 import 'package:nus_orbital_chronos/pages/assignment_tracker.dart';
 import 'package:nus_orbital_chronos/pages/daily_quote.dart';
+import 'package:nus_orbital_chronos/pages/focus_mode_stats.dart';
 
 // Import services
 import 'package:nus_orbital_chronos/services/timer_data.dart';
@@ -50,6 +52,7 @@ void main() async {
   Hive.registerAdapter(ColorAdapter()); // TypeId: 7
   Hive.registerAdapter(TimeOfDayAdapter()); // TypeId: 8
   Hive.registerAdapter(QuoteAdapter()); // TypeId: 9
+  Hive.registerAdapter(FocusModeTimeAdapter()); // TypeId: 10
 
   // Open Hive boxes
   await Hive.openBox<Bill>('Bills');
@@ -61,6 +64,7 @@ void main() async {
   await Hive.openBox<Category>('Expense Categories');
   await Hive.openBox<Quote>('Quotes');
   await Hive.openBox<Category>('Event Categories');
+  await Hive.openBox<FocusModeTime>('Focus');
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
@@ -78,6 +82,7 @@ void main() async {
             '/gpa_calc': (context) => GPACalc(),
             '/daily_quote': (context) => DailyQuotesScreen(),
             '/assignment_tracker': (context) => AssignmentTracker(),
+            '/fms': (context) => FocusModeStats(),
           },
 
           onGenerateRoute: (settings) {

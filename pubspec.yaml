@@ -78,13 +78,13 @@ flutter:
   assets:
     - assets/target.png
     - assets/tomato.png
+    - assets/leaf.png
     - assets/wallet.png
     - assets/calendar.png
     - assets/gpa_calc.png
     - assets/assignment_tracker.png
     - assets/daily_quotes.png
     - assets/chronos_splash.png
-
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

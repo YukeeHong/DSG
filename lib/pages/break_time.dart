@@ -14,7 +14,6 @@ class _BreakTimeState extends State<BreakTime> {
   late DateTime endTime;
   late Duration remainingTime;
   bool isPaused = false;
-  bool isRunning = true;
 
   @override
   void initState() {
@@ -50,9 +49,9 @@ class _BreakTimeState extends State<BreakTime> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(40),
-              child: Image(image: AssetImage('assets/tomato.png')),
+              child: Container(height: 375, child: Image(image: AssetImage('assets/leaf.png'))),
             ),
-            if (isRunning)
+            if (!isPaused)
               TimerCountdown(
                 endTime: endTime,
                 onEnd: () {
@@ -82,7 +81,6 @@ class _BreakTimeState extends State<BreakTime> {
                 } else {
                   pauseTimer();
                 }
-                isRunning = !isRunning;
               });
             },
             child: Icon(
